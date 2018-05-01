@@ -5,7 +5,7 @@ import './App.css';
 function PowerDisplay(props) {
   return (
     <div>
-      <h1>Computing Power: {props.curComputingPower}</h1>
+      <h1>Computing Power: {props.curComputingPower} </h1>
       <button className="increment-power">
         Increase
       </button>
