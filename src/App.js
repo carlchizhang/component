@@ -4,9 +4,9 @@ import './App.css';
 
 function PowerDisplay(props) {
   return (
-    <div>
+    <div className='power-display'>
       <h1>Computing Power: {props.curComputingPower} </h1>
-      <button className="increment-power">
+      <button className='increment-power'>
         Increase
       </button>
     </div>
@@ -16,7 +16,8 @@ function PowerDisplay(props) {
 class Navbar extends Component {
   render() {
     return (
-      <header className="navbar">
+      <header className='navbar'>
+        <img className='logo' src={logo} alt={'title'}/>
         <PowerDisplay
           curComputingPower={1000}
         />
@@ -28,7 +29,7 @@ class Navbar extends Component {
 class App extends Component {
   render() {
     return (
-      <div className="App">
+      <div className='App'>
         <Navbar/>
       </div>
     );
