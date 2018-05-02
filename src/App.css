@@ -51,15 +51,25 @@ table {
 
 /* end reset */
 div.App {
-  height: 100%;
+  width: 100%;
+  height: 100vh;
+  background-color: HoneyDew;
 }
 
+div.App > *{
+  font-family: Helvetica, sans-serif;
+}
+
+/* header */
 header.navbar {
   background-color: gray;
   display: flex;
+  flex-wrap: wrap;
   width: 100%;
-  height: 50%;
+  height: auto;
   align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2%
 }
 
 img.logo {
@@ -71,4 +81,76 @@ div.power-display {
   background-color: coral;
   display: flex;
   align-items: center;
+}
+
+/* main body */
+div.main-body {
+  background-color: AliceBlue;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  height: 75%;
+  width: 70%;
+  min-width: 800px;
+  margin: 0 auto;
+}
+
+/* upgrade table */
+div.upgrades-widget {
+  background-color: Aqua;
+  width: 45%;
+  height: 100%;
+}
+
+table.upgrades-table {
+  background-color: GhostWhite;
+  width: 100%;
+}
+
+table.upgrades-table td, th {
+  border: 1px solid black;
+}
+
+/* function window */
+div.ai-function-box {
+  background-color: Bisque;
+  width: 45%;
+  height: 100%;
+}
+
+/* progress bars */
+div.timer-bar-outer {
+  display: flex;
+  flex-direction: column-reverse;
+  background-color: Cornsilk;
+  width: 2%;
+  height: 90%;
+}
+
+div.timer-bar-inner {
+  background-color: Chartreuse;
+  width: 100%;
+  height: 25%;
+}
+
+div.singularity-bar-outer {
+  background-color: Cornsilk;
+  margin: 1% auto;
+  height: 3%;
+  width: 60%;
+}
+
+div.singularity-bar-inner {
+  background-color: Chartreuse;
+  height: 100%;
+  width: 70%;
+}
+
+/* winning button */
+img.create-singularity {
+  margin-left: 48%;
+  margin-right: auto;
+  width: 4%;
+  height: 4%;
 }
