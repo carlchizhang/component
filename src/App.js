@@ -3,15 +3,21 @@ import logo from './logo.svg';
 import './App.css';
 
 /* Header stuff */
-function PowerDisplay(props) {
-  return (
-    <div className='power-display'>
-      <h1>Computing Power: {props.curComputingPower} </h1>
-      <button className='increment-power'>
-        Increase
-      </button>
-    </div>
-  );
+class PowerDisplay extends Component {
+  render() {
+    return (
+      <div className='power-display'>
+        <h1>Computing Power: {this.props.curComputingPower} </h1>
+
+        <button 
+          className='increment-power' 
+          onClick={this.props.overclock}
+        >
+          Overclock
+        </button>
+      </div>
+    );
+  }
 }
 
 class Navbar extends Component {
@@ -20,11 +26,13 @@ class Navbar extends Component {
       <header className='navbar'>
         <img className='logo' src={logo} alt={'title'}/>
         <PowerDisplay
-          curComputingPower={1000}
+          curComputingPower={this.props.curPower}
+          overclock={this.props.overclock}
         />
-        <button className='reset-game'>
-          Reset
-        </button>
+        <div>
+          <button className='reset-game'>Reset</button>  
+          <button className='about-game'>About</button>          
+        </div>
       </header>
     );
   }
@@ -37,9 +45,8 @@ function UpgradeItem(props) {
   return (
     <tr className='upgrade-item'>
       <td>{props.upgradeName}</td>
-      <td>{props.upgradeLevel}</td>
       <td className='compile-column'>
-        <button>
+        <button onClick={() => props.onUpgrade(props.upgradeName)}>
           Cost: {props.upgradeCost} 
         </button>
       </td>
@@ -47,20 +54,11 @@ function UpgradeItem(props) {
   );
 }
 
-const upgrades = [
-  {upgradeName: 'Styling', upgradeLevel: 1, upgradeCost: 100},
-  {upgradeName: 'AI', upgradeLevel: 2, upgradeCost: 500},
-  {upgradeName: 'Timer', upgradeLevel: 1, upgradeCost: 400},
-  {upgradeName: 'Progress Bar', upgradeLevel: 1, upgradeCost: 1000},
-  {upgradeName: 'Favicon', upgradeLevel: 0, upgradeCost: 50}
-];
-
 class UpgradesWidget extends Component {
-  renderItem(upgradeName, upgradeLevel, upgradeCost) {
+  renderItem(upgradeName, upgradeCost) {
     return (
-      <UpgradeItem
+      <UpgradeItem onUpgrade={this.props.onUpgrade}
         upgradeName={upgradeName}
-        upgradeLevel={upgradeLevel}
         upgradeCost={upgradeCost}
       />
     );
@@ -73,11 +71,13 @@ class UpgradesWidget extends Component {
         <table className='upgrades-table'>
           <tr>
             <th>Type</th>
-            <th>Current Level</th>
             <th>Compile</th>
           </tr>
-          {upgrades.map(item => {
-            return this.renderItem(item.upgradeName, item.upgradeLevel, item.upgradeCost);
+          {this.props.upgrades.map(item => {
+            if (!item.compiled && this.props.curPower >= item.upgradeCost)
+              return this.renderItem(item.upgradeName, item.upgradeCost);
+            else
+              return;
           })}
         </table>
       </div>
@@ -114,7 +114,7 @@ class SingularityProgressBar extends Component {
   render() {
     return (
       <div className='singularity-bar-outer'>
-        <div className='singularity-bar-inner'></div>
+        <div className='singularity-bar-inner' style={{width: this.props.curProgress + '%'}}></div>
       </div>
     );
   }
@@ -131,20 +131,83 @@ function SingularityButton(props) {
 
 /* main game stuff */
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      currentComputingPower: 0,
+      currentOverclockIncrement: 10,
+      maxComputingPower: 1000,
+
+      upgrades: [
+        {upgradeName: 'Overclock Potential', upgradeCost: 200, compiled: false}
+      ],
+    };
+  }
+
+  changePower(val) {
+    let newComputingPower = this.state.currentComputingPower + val;
+    if (newComputingPower > this.state.maxComputingPower) {
+      newComputingPower = this.state.maxComputingPower;
+    }
+    else if (newComputingPower < 0) {
+      newComputingPower = 0;
+    }
+
+    this.setState({
+      currentComputingPower: newComputingPower
+    });
+  }
+
+  overclock() {
+    this.changePower(this.state.currentOverclockIncrement);
+  }
+
+  itemUpgraded(itemName) {
+    let upgrades = this.state.upgrades.slice();
+    let upgrade = upgrades.find(function(element) {
+      if (element.upgradeName === itemName)
+        return element
+    });
+
+    if (!upgrade || this.state.currentComputingPower < upgrade.upgradeCost || upgrade.compiled) {
+      return;
+    }
+
+    switch(upgrade.upgradeName) {
+      case 'Overclock Potential':
+        this.setState({currentOverclockIncrement: 20});
+        break;
+      default:
+        console.log('Invalid Upgrade');
+    }
+    upgrade.compiled = true;
+    this.changePower(-upgrade.upgradeCost);
+    this.setState({upgrades: upgrades});
+  }
+
   render() {
     return (
       <div className='App'>
-        <Navbar/>
+        <Navbar
+          curPower={this.state.currentComputingPower}
+          overclock={this.overclock.bind(this)}
+        />
         <div className='main-body'>
-          <UpgradesWidget/>
+          <UpgradesWidget 
+            curPower={this.state.currentComputingPower}
+            upgrades={this.state.upgrades}
+            onUpgrade={this.itemUpgraded.bind(this)}
+          />
           <TimerProgressBar/>
           <AiFunctionBox/>
         </div>
-        <SingularityProgressBar/>
-                <SingularityButton/>
+        <SingularityProgressBar curProgress={100*(this.state.currentComputingPower/this.state.maxComputingPower)}/>
+        <SingularityButton/>
       </div>
     );
   }
 }
+
+/* constants */
 
 export default App;
