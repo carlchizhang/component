@@ -75,7 +75,7 @@ class UpgradesWidget extends Component {
             <th>Compile</th>
           </tr>
           {this.props.upgrades.map((item, index) => {
-            if (!item.compiled && this.props.curPower >= item.upgradeCost)
+            if (!item.compiled && item.prerequisite && this.props.curPower >= item.upgradeCost)
               return this.renderItem(item.upgradeName, item.upgradeCost, index);
             else
               return;
@@ -137,11 +137,11 @@ class App extends Component {
     this.state = {
       currentComputingPower: 0,
       currentOverclockIncrement: 10,
-      maxComputingPower: 1000,
+      maxComputingPower: 10000,
 
       upgrades: [
-        {upgradeName: 'Overclock Potential', upgradeCost: 200, compiled: false},
-        {upgradeName: ''}
+        {upgradeName: 'High Voltage', upgradeCost: 200, compiled: false, prerequisite: true},
+        {upgradeName: 'Nitrogen Cooling', upgradeCost: 1000, compiled: false, prerequisite: false},
       ],
     };
   }
@@ -175,6 +175,10 @@ class App extends Component {
     switch(itemIndex) {
       case 0:
         this.setState({currentOverclockIncrement: 20});
+        upgrades[1].prerequisite = true;
+        break;
+      case 1:
+        this.setState({currentOverclockIncrement: 40});
         break;
       default:
         console.log('Invalid Upgrade');
