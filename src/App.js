@@ -46,7 +46,7 @@ function UpgradeItem(props) {
     <tr className='upgrade-item'>
       <td>{props.upgradeName}</td>
       <td className='compile-column'>
-        <button onClick={() => props.onUpgrade(props.upgradeName)}>
+        <button onClick={() => props.onUpgrade(props.upgradeIndex)}>
           Cost: {props.upgradeCost} 
         </button>
       </td>
@@ -55,11 +55,12 @@ function UpgradeItem(props) {
 }
 
 class UpgradesWidget extends Component {
-  renderItem(upgradeName, upgradeCost) {
+  renderItem(upgradeName, upgradeCost, upgradeIndex) {
     return (
       <UpgradeItem onUpgrade={this.props.onUpgrade}
         upgradeName={upgradeName}
         upgradeCost={upgradeCost}
+        upgradeIndex={upgradeIndex}
       />
     );
   }
@@ -73,9 +74,9 @@ class UpgradesWidget extends Component {
             <th>Type</th>
             <th>Compile</th>
           </tr>
-          {this.props.upgrades.map(item => {
+          {this.props.upgrades.map((item, index) => {
             if (!item.compiled && this.props.curPower >= item.upgradeCost)
-              return this.renderItem(item.upgradeName, item.upgradeCost);
+              return this.renderItem(item.upgradeName, item.upgradeCost, index);
             else
               return;
           })}
@@ -139,7 +140,8 @@ class App extends Component {
       maxComputingPower: 1000,
 
       upgrades: [
-        {upgradeName: 'Overclock Potential', upgradeCost: 200, compiled: false}
+        {upgradeName: 'Overclock Potential', upgradeCost: 200, compiled: false},
+        {upgradeName: ''}
       ],
     };
   }
@@ -162,19 +164,16 @@ class App extends Component {
     this.changePower(this.state.currentOverclockIncrement);
   }
 
-  itemUpgraded(itemName) {
+  itemUpgraded(itemIndex) {
     let upgrades = this.state.upgrades.slice();
-    let upgrade = upgrades.find(function(element) {
-      if (element.upgradeName === itemName)
-        return element
-    });
+    let upgrade = upgrades[itemIndex];
 
     if (!upgrade || this.state.currentComputingPower < upgrade.upgradeCost || upgrade.compiled) {
       return;
     }
 
-    switch(upgrade.upgradeName) {
-      case 'Overclock Potential':
+    switch(itemIndex) {
+      case 0:
         this.setState({currentOverclockIncrement: 20});
         break;
       default:
