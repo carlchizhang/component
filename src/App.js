@@ -113,11 +113,16 @@ class TimerProgressBar extends Component {
 /* win game progress bar */
 class SingularityProgressBar extends Component {
   render() {
-    return (
-      <div className='singularity-bar-outer'>
-        <div className='singularity-bar-inner' style={{width: this.props.curProgress + '%'}}></div>
-      </div>
-    );
+    if (this.props.visible) {
+      return (
+        <div className='singularity-bar-outer'>
+          <div className='singularity-bar-inner' style={{width: this.props.curProgress + '%'}}></div>
+        </div>
+      );
+    }
+    else {
+      return null;
+    }
   }
 }
 
@@ -136,12 +141,17 @@ class App extends Component {
     super(props);
     this.state = {
       currentComputingPower: 0,
-      currentOverclockIncrement: 10,
-      maxComputingPower: 10000,
+      currentOverclockIncrement: 8,
+      maxComputingPower: 1048576,
+      visibleWidgets: {
+        SingularityProgressBar: false,
+      },
 
       upgrades: [
-        {upgradeName: 'High Voltage', upgradeCost: 200, compiled: false, prerequisite: true},
-        {upgradeName: 'Nitrogen Cooling', upgradeCost: 1000, compiled: false, prerequisite: false},
+        {upgradeName: 'High-Energy Capacitors', upgradeCost: 256, compiled: false, prerequisite: true},
+        {upgradeName: 'Quantum Energy States', upgradeCost: 2048, compiled: false, prerequisite: false},
+        {upgradeName: 'Applied Superconductivity', upgradeCost: 16384, compiled: false, prerequisite: false},
+        {upgradeName: 'Construction Templates', upgradeCost: 10, compiled: false, prerequisite: true},
       ],
     };
   }
@@ -164,6 +174,17 @@ class App extends Component {
     this.changePower(this.state.currentOverclockIncrement);
   }
 
+  changeVisibility(name, visible) {
+    let visibleWidgets = Object.assign({}, this.state.visibleWidgets);
+    if (visibleWidgets.hasOwnProperty(name) && (visible === true || visible === false)) {
+      visibleWidgets[name] = visible;
+    }
+
+    this.setState({
+      visibleWidgets: visibleWidgets
+    });
+  }
+
   itemUpgraded(itemIndex) {
     let upgrades = this.state.upgrades.slice();
     let upgrade = upgrades[itemIndex];
@@ -174,11 +195,18 @@ class App extends Component {
 
     switch(itemIndex) {
       case 0:
-        this.setState({currentOverclockIncrement: 20});
+        this.setState({currentOverclockIncrement: 32});
         upgrades[1].prerequisite = true;
         break;
       case 1:
-        this.setState({currentOverclockIncrement: 40});
+        this.setState({currentOverclockIncrement: 256});
+        upgrades[2].prerequisite = true;
+        break;
+      case 2:
+        this.setState({currentOverclockIncrement: 2048});
+        break;
+      case 3:
+        this.changeVisibility('SingularityProgressBar', true);
         break;
       default:
         console.log('Invalid Upgrade');
@@ -204,7 +232,10 @@ class App extends Component {
           <TimerProgressBar/>
           <AiFunctionBox/>
         </div>
-        <SingularityProgressBar curProgress={100*(this.state.currentComputingPower/this.state.maxComputingPower)}/>
+        <SingularityProgressBar 
+          curProgress={100*(this.state.currentComputingPower/this.state.maxComputingPower)}
+          visible={this.state.visibleWidgets.SingularityProgressBar}
+        />
         <SingularityButton/>
       </div>
     );
