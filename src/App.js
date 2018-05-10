@@ -2,14 +2,46 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
+/* 
+  colors: from darkest to lightest
+  #3066BE
+  #119DA4
+  #6D9DC5
+  #80DED9
+  #AEECEF
+*/
+
 /* Header stuff */
+const powerDisplayStyle0 = {
+  display: 'flex',
+  alignItems: 'center',
+}
+const powerTextStyle0 = {
+  margin: '6px',
+}
+const ocButtonStyle0 = {
+  margin: '6px',
+}
 class PowerDisplay extends Component {
   render() {
+    let divStyle;
+    let h1Style;
+    let buttonStyle;
+
+    switch(this.props.styleLevel) {
+      default:
+        divStyle = powerDisplayStyle0;
+        h1Style = powerTextStyle0;
+        buttonStyle = ocButtonStyle0;
+        break;
+    }
+
     return (
-      <div className='power-display'>
-        <h1>Computing Power: {this.props.curComputingPower} </h1>
+      <div className='power-display' style={divStyle}>
+        <h1 style={h1Style}>Computing Power: {this.props.curComputingPower} </h1>
 
         <button 
+          style={buttonStyle}
           className='increment-power' 
           onClick={this.props.overclock}
         >
@@ -20,21 +52,56 @@ class PowerDisplay extends Component {
   }
 }
 
+
+const logoStyle0 = {
+  width: '40px',
+  height: '40px'
+}
+const navbarStyle0 = {
+  backgroundColor: '#119DA4',
+  display: 'flex',
+  flexWrap: 'wrap',
+  width: '100%',
+  height: 'auto',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  marginBottom: '2%'
+}
 class Navbar extends Component {
   render() {
-    return (
-      <header className='navbar'>
-        <img className='logo' src={logo} alt={'title'}/>
+    let navbarStyle;
+    switch(this.props.styleLevel) {
+      default:
+        navbarStyle = navbarStyle0;
+        break;
+    }
+
+    if(this.props.visibleWidgets.Navbar) {
+      return (
+        <header className='navbar' style={navbarStyle}>
+          <img className='logo' src={logo} alt={'title'} style={logoStyle0}/>
+          <PowerDisplay
+            curComputingPower={this.props.curPower}
+            overclock={this.props.overclock}
+            styleLevel={this.props.styleLevel}
+          />
+          <div>
+            <button className='reset-game'>Reset</button>  
+            <button className='about-game'>About</button>          
+          </div>
+        </header>
+      );      
+    }
+    else {
+      return (
         <PowerDisplay
-          curComputingPower={this.props.curPower}
-          overclock={this.props.overclock}
+            curComputingPower={this.props.curPower}
+            overclock={this.props.overclock}
+            styleLevel={this.props.styleLevel}
         />
-        <div>
-          <button className='reset-game'>Reset</button>  
-          <button className='about-game'>About</button>          
-        </div>
-      </header>
-    );
+      );
+    }
+
   }
 }
 
@@ -43,7 +110,7 @@ class Navbar extends Component {
 /* upgrade table */
 function UpgradeItem(props) {
   return (
-    <tr className='upgrade-item'>
+    <tr key={props.key} className='upgrade-item'>
       <td>{props.upgradeName}</td>
       <td className='compile-column'>
         <button onClick={() => props.onUpgrade(props.upgradeIndex)}>
@@ -57,7 +124,8 @@ function UpgradeItem(props) {
 class UpgradesWidget extends Component {
   renderItem(upgradeName, upgradeCost, upgradeIndex) {
     return (
-      <UpgradeItem onUpgrade={this.props.onUpgrade}
+      <UpgradeItem 
+        onUpgrade={this.props.onUpgrade}
         upgradeName={upgradeName}
         upgradeCost={upgradeCost}
         upgradeIndex={upgradeIndex}
@@ -70,16 +138,21 @@ class UpgradesWidget extends Component {
       <div className='upgrades-widget'>
         <h1>Modules</h1>
         <table className='upgrades-table'>
+          <thead>
           <tr>
             <th>Type</th>
             <th>Compile</th>
           </tr>
+          </thead>
+
+          <tbody>
           {this.props.upgrades.map((item, index) => {
             if (!item.compiled && item.prerequisite && this.props.curPower >= item.upgradeCost)
               return this.renderItem(item.upgradeName, item.upgradeCost, index);
             else
-              return;
+              return null;
           })}
+          </tbody>
         </table>
       </div>
     );
@@ -113,7 +186,7 @@ class TimerProgressBar extends Component {
 /* win game progress bar */
 class SingularityProgressBar extends Component {
   render() {
-    if (this.props.visible) {
+    if (this.props.visibleWidgets.SingularityProgressBar) {
       return (
         <div className='singularity-bar-outer'>
           <div className='singularity-bar-inner' style={{width: this.props.curProgress + '%'}}></div>
@@ -143,7 +216,10 @@ class App extends Component {
       currentComputingPower: 0,
       currentOverclockIncrement: 8,
       maxComputingPower: 1048576,
+      styleLevel: 0,
+
       visibleWidgets: {
+        Navbar: false,
         SingularityProgressBar: false,
       },
 
@@ -151,7 +227,8 @@ class App extends Component {
         {upgradeName: 'High-Energy Capacitors', upgradeCost: 256, compiled: false, prerequisite: true},
         {upgradeName: 'Quantum Energy States', upgradeCost: 2048, compiled: false, prerequisite: false},
         {upgradeName: 'Applied Superconductivity', upgradeCost: 16384, compiled: false, prerequisite: false},
-        {upgradeName: 'Construction Templates', upgradeCost: 10, compiled: false, prerequisite: true},
+        {upgradeName: 'Navigation', upgradeCost: 512, compiled: false, prerequisite: true},
+        {upgradeName: 'Construction Templates', upgradeCost: 65536, compiled: false, prerequisite: true},
       ],
     };
   }
@@ -186,6 +263,7 @@ class App extends Component {
   }
 
   itemUpgraded(itemIndex) {
+    debugger;
     let upgrades = this.state.upgrades.slice();
     let upgrade = upgrades[itemIndex];
 
@@ -206,6 +284,9 @@ class App extends Component {
         this.setState({currentOverclockIncrement: 2048});
         break;
       case 3:
+        this.changeVisibility('Navbar', true);
+        break;
+      case 4:
         this.changeVisibility('SingularityProgressBar', true);
         break;
       default:
@@ -222,6 +303,8 @@ class App extends Component {
         <Navbar
           curPower={this.state.currentComputingPower}
           overclock={this.overclock.bind(this)}
+          visibleWidgets={this.state.visibleWidgets}
+          styleLevel={this.state.styleLevel}
         />
         <div className='main-body'>
           <UpgradesWidget 
@@ -234,7 +317,7 @@ class App extends Component {
         </div>
         <SingularityProgressBar 
           curProgress={100*(this.state.currentComputingPower/this.state.maxComputingPower)}
-          visible={this.state.visibleWidgets.SingularityProgressBar}
+          visibleWidgets={this.state.visibleWidgets}
         />
         <SingularityButton/>
       </div>

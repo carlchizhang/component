@@ -59,8 +59,7 @@ div.App {
 div.App > *{
   font-family: Helvetica, sans-serif;
 }
-
-/* header */
+/*
 header.navbar {
   background-color: gray;
   display: flex;
@@ -77,13 +76,6 @@ img.logo {
   height: 40px;
 }
 
-div.power-display {
-  background-color: coral;
-  display: flex;
-  align-items: center;
-}
-
-/* main body */
 div.main-body {
   background-color: AliceBlue;
   display: flex;
@@ -96,7 +88,6 @@ div.main-body {
   margin: 0 auto;
 }
 
-/* upgrade table */
 div.upgrades-widget {
   background-color: Aqua;
   width: 45%;
@@ -112,14 +103,12 @@ table.upgrades-table td, th {
   border: 1px solid black;
 }
 
-/* function window */
 div.ai-function-box {
   background-color: Bisque;
   width: 45%;
   height: 100%;
 }
 
-/* progress bars */
 div.timer-bar-outer {
   display: flex;
   flex-direction: column-reverse;
@@ -146,10 +135,10 @@ div.singularity-bar-inner {
   height: 100%;
 }
 
-/* winning button */
 img.create-singularity {
   margin-left: 48%;
   margin-right: auto;
   width: 4%;
   height: 4%;
 }
+*/
