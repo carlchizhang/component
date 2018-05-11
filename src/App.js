@@ -4,11 +4,14 @@ import './App.css';
 
 /* 
   colors: from darkest to lightest
+  t1:
   #3066BE
-  #119DA4
   #6D9DC5
-  #80DED9
   #AEECEF
+  t2:
+  #355C7D
+  #6b8ea5
+  #b8fce4
 */
 
 /* Header stuff */
@@ -16,12 +19,51 @@ const powerDisplayStyle0 = {
   display: 'flex',
   alignItems: 'center',
 }
+const powerDisplayStyle1 = {
+  display: 'flex',
+  alignItems: 'center',
+}
+const powerDisplayStyle2 = {
+  display: 'flex',
+  alignItems: 'center',
+}
+
 const powerTextStyle0 = {
-  margin: '6px',
+  marginRight: '4px',
 }
+const powerTextStyle1 = {
+  marginRight: '4px',
+  color: '#3066BE',
+}
+const powerTextStyle2 = {
+  marginRight: '4px',
+  paddingRight: '12px',
+  fontWeight: 'bold',
+  color: '#b8fce4',
+}
+
 const ocButtonStyle0 = {
-  margin: '6px',
+  marginLeft: '4px',
 }
+const ocButtonStyle1 = {
+  marginLeft: '4px',
+  padding: '4px',
+  border: '1px solid #3066BE',
+  backgroundColor: '#3066BE',
+  color: '#AEECEF',
+  fontWeight: 'bold',
+}
+const ocButtonStyle2 = {
+  marginLeft: '4px',
+  padding: '4px',
+  width: '75px',
+  border: '1px solid #6b8ea5',
+  borderRadius: '4px',
+  backgroundColor: '#b8fce4',
+  color: '#355C7D',
+  fontWeight: 'bold',
+}
+
 class PowerDisplay extends Component {
   render() {
     let divStyle;
@@ -29,6 +71,16 @@ class PowerDisplay extends Component {
     let buttonStyle;
 
     switch(this.props.styleLevel) {
+      case 2:
+        divStyle = powerDisplayStyle2;
+        h1Style = powerTextStyle2;
+        buttonStyle = ocButtonStyle2;
+        break;        
+      case 1:
+        divStyle = powerDisplayStyle1;
+        h1Style = powerTextStyle1;
+        buttonStyle = ocButtonStyle1;
+        break;
       default:
         divStyle = powerDisplayStyle0;
         h1Style = powerTextStyle0;
@@ -57,8 +109,18 @@ const logoStyle0 = {
   width: '40px',
   height: '40px'
 }
+
 const navbarStyle0 = {
-  backgroundColor: '#119DA4',
+  backgroundColor: 'AliceBlue',
+  display: 'flex',
+  flexWrap: 'wrap',
+  width: '100%',
+  height: 'auto',
+  alignItems: 'center',
+  marginBottom: '2%'
+}
+const navbarStyle1 = {
+  backgroundColor: 'AliceBlue',
   display: 'flex',
   flexWrap: 'wrap',
   width: '100%',
@@ -67,27 +129,50 @@ const navbarStyle0 = {
   justifyContent: 'space-between',
   marginBottom: '2%'
 }
+const navbarStyle2 = {
+  backgroundColor: '#355C7D',
+  display: 'flex',
+  flexWrap: 'wrap',
+  width: '100%',
+  height: 'auto',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  marginBottom: '2%'
+}
+
 class Navbar extends Component {
   render() {
     let navbarStyle;
+    let buttonStyle;
     switch(this.props.styleLevel) {
+      case 2:
+        navbarStyle = navbarStyle2;
+        buttonStyle = ocButtonStyle2;
+        break;
+      case 1:
+        navbarStyle = navbarStyle1;
+        buttonStyle = ocButtonStyle1;
+        break;
       default:
         navbarStyle = navbarStyle0;
+        buttonStyle = ocButtonStyle0;
         break;
     }
 
     if(this.props.visibleWidgets.Navbar) {
       return (
         <header className='navbar' style={navbarStyle}>
-          <img className='logo' src={logo} alt={'title'} style={logoStyle0}/>
+          {this.props.styleLevel > 0 &&
+            <img className='logo' src={logo} alt={'title'} style={logoStyle0}/>
+          }
           <PowerDisplay
             curComputingPower={this.props.curPower}
             overclock={this.props.overclock}
             styleLevel={this.props.styleLevel}
           />
           <div>
-            <button className='reset-game'>Reset</button>  
-            <button className='about-game'>About</button>          
+            <button className='reset-game' style={buttonStyle}>Reset</button>  
+            <button className='about-game' style={buttonStyle}>About</button>          
           </div>
         </header>
       );      
@@ -108,6 +193,18 @@ class Navbar extends Component {
 
 /* main body stuff */
 /* upgrade table */
+const upgradesWidgetStyle0 = {
+  width: '45%',
+  height: '100%',
+}
+
+const upgradesTableStyle0 = {
+  width: '100%',
+}
+
+const upgradesThTdStyle0 = {
+  border: '1px solid black',
+}
 function UpgradeItem(props) {
   return (
     <tr key={props.key} className='upgrade-item'>
@@ -138,12 +235,14 @@ class UpgradesWidget extends Component {
       <div className='upgrades-widget'>
         <h1>Modules</h1>
         <table className='upgrades-table'>
-          <thead>
-          <tr>
-            <th>Type</th>
-            <th>Compile</th>
-          </tr>
-          </thead>
+          {this.props.visibleWidgets.UpgradesTable &&
+            <thead>
+            <tr>
+              <th>Type</th>
+              <th>Compile</th>
+            </tr>
+            </thead>
+          }
 
           <tbody>
           {this.props.upgrades.map((item, index) => {
@@ -163,23 +262,33 @@ class UpgradesWidget extends Component {
 const aiCode = 'function compute() { for(var i = 0; i < 2; ++i) { ++ComputingPower; } }'
 class AiFunctionBox extends Component {
   render() {
-    return (
-      <div className='ai-function-box'>
-        <h1>Artificial Intelligence</h1>
-        {aiCode}
-      </div>
-    );
+    if (this.props.visibleWidgets.AiFunctionBox) {
+      return (
+        <div className='ai-function-box'>
+          <h1>Artificial Intelligence</h1>
+          {aiCode}
+        </div>
+      );      
+    }
+    else {
+      return null;
+    }
   }
 }
 
 /* income timer progress bar */
 class TimerProgressBar extends Component {
   render() {
-    return (
-      <div className='timer-bar-outer'>
-        <div className='timer-bar-inner'></div>
-      </div>
-    );
+    if (this.props.visibleWidgets.AiTimerBar) {
+      return (
+        <div className='timer-bar-outer'>
+          <div className='timer-bar-inner'></div>
+        </div>
+      );      
+    }
+    else {
+      return null;
+    }
   }
 }
 
@@ -201,14 +310,29 @@ class SingularityProgressBar extends Component {
 
 /* singularity button */
 function SingularityButton(props) {
-  return (
-    <div>
-      <img className='create-singularity' src={logo} alt={'win'}/>
-    </div>
-  );
+  if(props.visibleWidgets.SingularityButton) {
+    return (
+      <div>
+        <img className='create-singularity' src={logo} alt={'win'}/>
+      </div>
+    ); 
+  }
+  else {
+    return null;
+  }
 }
 
 /* main game stuff */
+const mainBodyStyle0 = {
+  display: 'flex',
+  flexWrap: 'wrap',
+  justifyContent: 'space-between',
+  height: '75%',
+  width: '70%',
+  minWidth: '800px',
+  margin: '0 auto'
+}
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -219,15 +343,20 @@ class App extends Component {
       styleLevel: 0,
 
       visibleWidgets: {
-        Navbar: false,
-        SingularityProgressBar: false,
+        Navbar: true,
+        UpgradesTable: true,
+        AiTimerBar: true,
+        AiFunctionBox: true,
+        SingularityProgressBar: true,
+        SingularityButton: true,
       },
 
       upgrades: [
-        {upgradeName: 'High-Energy Capacitors', upgradeCost: 256, compiled: false, prerequisite: true},
+        {upgradeName: 'High-Energy Capacitors', upgradeCost: 512, compiled: false, prerequisite: true},
         {upgradeName: 'Quantum Energy States', upgradeCost: 2048, compiled: false, prerequisite: false},
         {upgradeName: 'Applied Superconductivity', upgradeCost: 16384, compiled: false, prerequisite: false},
-        {upgradeName: 'Navigation', upgradeCost: 512, compiled: false, prerequisite: true},
+        {upgradeName: 'Digital Navigation', upgradeCost: 256, compiled: false, prerequisite: true},
+        {upgradeName: 'Assembly Patterns', upgradeCost: 2048, compiled: false, prerequisite: true},
         {upgradeName: 'Construction Templates', upgradeCost: 65536, compiled: false, prerequisite: true},
       ],
     };
@@ -263,7 +392,6 @@ class App extends Component {
   }
 
   itemUpgraded(itemIndex) {
-    debugger;
     let upgrades = this.state.upgrades.slice();
     let upgrade = upgrades[itemIndex];
 
@@ -271,6 +399,7 @@ class App extends Component {
       return;
     }
 
+    //can code invidual event handlers for upgrades but i'm lazy and this is a proof of concept app
     switch(itemIndex) {
       case 0:
         this.setState({currentOverclockIncrement: 32});
@@ -287,6 +416,9 @@ class App extends Component {
         this.changeVisibility('Navbar', true);
         break;
       case 4:
+        this.changeVisibility('UpgradesTable', true);
+        break;
+      case 5:
         this.changeVisibility('SingularityProgressBar', true);
         break;
       default:
@@ -306,20 +438,21 @@ class App extends Component {
           visibleWidgets={this.state.visibleWidgets}
           styleLevel={this.state.styleLevel}
         />
-        <div className='main-body'>
+        <div className='main-body' style={mainBodyStyle0}>
           <UpgradesWidget 
             curPower={this.state.currentComputingPower}
             upgrades={this.state.upgrades}
             onUpgrade={this.itemUpgraded.bind(this)}
+            visibleWidgets={this.state.visibleWidgets}
           />
-          <TimerProgressBar/>
-          <AiFunctionBox/>
+          <TimerProgressBar visibleWidgets={this.state.visibleWidgets}/>
+          <AiFunctionBox visibleWidgets={this.state.visibleWidgets}/>
         </div>
         <SingularityProgressBar 
           curProgress={100*(this.state.currentComputingPower/this.state.maxComputingPower)}
           visibleWidgets={this.state.visibleWidgets}
         />
-        <SingularityButton/>
+        <SingularityButton visibleWidgets={this.state.visibleWidgets}/>
       </div>
     );
   }
