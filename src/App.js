@@ -15,19 +15,6 @@ import './App.css';
 */
 
 /* Header stuff */
-const powerDisplayStyle0 = {
-  display: 'flex',
-  alignItems: 'center',
-}
-const powerDisplayStyle1 = {
-  display: 'flex',
-  alignItems: 'center',
-}
-const powerDisplayStyle2 = {
-  display: 'flex',
-  alignItems: 'center',
-}
-
 const powerTextStyle0 = {
   marginRight: '4px',
 }
@@ -66,23 +53,23 @@ const ocButtonStyle2 = {
 
 class PowerDisplay extends Component {
   render() {
-    let divStyle;
+    let divStyle = {
+      display: 'flex',
+      alignItems: 'center',
+    };
     let h1Style;
     let buttonStyle;
 
     switch(this.props.styleLevel) {
       case 2:
-        divStyle = powerDisplayStyle2;
         h1Style = powerTextStyle2;
         buttonStyle = ocButtonStyle2;
         break;        
       case 1:
-        divStyle = powerDisplayStyle1;
         h1Style = powerTextStyle1;
         buttonStyle = ocButtonStyle1;
         break;
       default:
-        divStyle = powerDisplayStyle0;
         h1Style = powerTextStyle0;
         buttonStyle = ocButtonStyle0;
         break;
@@ -206,10 +193,11 @@ const upgradesThTdStyle0 = {
   border: '1px solid black',
 }
 function UpgradeItem(props) {
+  let thTdStyle = upgradesThTdStyle0;
   return (
     <tr key={props.key} className='upgrade-item'>
-      <td>{props.upgradeName}</td>
-      <td className='compile-column'>
+      <td style={thTdStyle}>{props.upgradeName}</td>
+      <td style={thTdStyle} className='compile-column'>
         <button onClick={() => props.onUpgrade(props.upgradeIndex)}>
           Cost: {props.upgradeCost} 
         </button>
@@ -231,30 +219,58 @@ class UpgradesWidget extends Component {
   }
 
   render() {
-    return (
-      <div className='upgrades-widget'>
-        <h1>Modules</h1>
-        <table className='upgrades-table'>
-          {this.props.visibleWidgets.UpgradesTable &&
+    let widgetStyle = upgradesWidgetStyle0;
+    let tableStyle = upgradesTableStyle0;
+    let thTdStyle = upgradesThTdStyle0;
+
+    if(this.props.visibleWidgets.UpgradesTable) {
+      return (
+        <div className='upgrades-widget' style={widgetStyle}>
+          <h1>Modules</h1>
+          <table className='upgrades-table'>
             <thead>
             <tr>
-              <th>Type</th>
-              <th>Compile</th>
+              <th style={thTdStyle}>Type</th>
+              <th style={thTdStyle}>Compile</th>
             </tr>
             </thead>
-          }
 
-          <tbody>
+            <tbody>
+            {this.props.upgrades.map((item, index) => {
+              if (!item.compiled && item.prerequisite && this.props.curPower >= item.upgradeCost)
+                return this.renderItem(item.upgradeName, item.upgradeCost, index);
+              else
+                return null;
+            })}
+            </tbody>
+          </table>
+        </div>
+      );
+    }
+    else {
+      let divStyle = {
+        display: 'flex',
+      };
+      return (
+        <div className='upgrades-widget' style={widgetStyle}>
           {this.props.upgrades.map((item, index) => {
-            if (!item.compiled && item.prerequisite && this.props.curPower >= item.upgradeCost)
-              return this.renderItem(item.upgradeName, item.upgradeCost, index);
+            if (!item.compiled && item.prerequisite && this.props.curPower >= item.upgradeCost) {
+              return (
+                <div style={divStyle}>
+                  <h1> {item.upgradeName} </h1>
+
+                  <button onClick={() => this.props.onUpgrade(index)}>
+                    Cost: {item.upgradeCost}
+                  </button>
+                </div>
+              );          
+            }
             else
               return null;
           })}
-          </tbody>
-        </table>
-      </div>
-    );
+        </div>
+      );
+    }
   }
 }
 
@@ -340,7 +356,7 @@ class App extends Component {
       currentComputingPower: 0,
       currentOverclockIncrement: 8,
       maxComputingPower: 1048576,
-      styleLevel: 0,
+      styleLevel: 2,
 
       visibleWidgets: {
         Navbar: true,
