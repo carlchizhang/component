@@ -98,7 +98,6 @@ const logoStyle0 = {
 }
 
 const navbarStyle0 = {
-  backgroundColor: 'AliceBlue',
   display: 'flex',
   flexWrap: 'wrap',
   width: '100%',
@@ -177,28 +176,132 @@ class Navbar extends Component {
   }
 }
 
-
+/*
+  t1:
+  #3066BE
+  #6D9DC5
+  #AEECEF
+  t2:
+  #355C7D
+  #6b8ea5
+  #b8fce4*/
 /* main body stuff */
 /* upgrade table */
 const upgradesWidgetStyle0 = {
   width: '45%',
   height: '100%',
 }
+const upgradesWidgetStyle1 = {
+  width: '45%',
+  height: '100%',
+}
+const upgradesWidgetStyle2 = {
+  width: '45%',
+  height: '100%',
+}
+
+const titleStyle0 = {}
+const titleStyle1 = {
+  textAlign: 'center',
+  fontSize: '24px',
+  marginBottom: '10px',
+}
+const titleStyle2 = {
+  textAlign: 'center',
+  color: '#6b8ea5',
+  fontWeight: 'bold',
+  fontSize: '24px',
+  marginBottom: '10px',
+}
 
 const upgradesTableStyle0 = {
   width: '100%',
 }
+const upgradesTableStyle1 = {
+  width: '100%',
+}
+const upgradesTableStyle2 = {
+  width: '100%',
+  borderLeft: '2px solid #355C7D',
+  borderRight: '2px solid #355C7D',
+}
 
-const upgradesThTdStyle0 = {
+const upgradesTdStyle0 = {
   border: '1px solid black',
 }
+const upgradesTdStyle1 = {
+  border: '1px solid black',
+  textAlign: 'center',
+  verticalAlign: 'middle',
+}
+const upgradesTdStyle2 = {
+  color: '#355C7D',
+  fontWeight: 'bold',
+  textAlign: 'center',
+  verticalAlign: 'middle',
+  height: '35px',
+  borderBottom: '2px solid #355C7D',
+}
+
+const upgradesThStyle0 = {
+  border: '1px solid black',
+}
+const upgradesThStyle1 = {
+  border: '1px solid black',
+  verticalAlign: 'middle',
+  backgroundColor: 'AliceBlue',
+}
+const upgradesThStyle2 = {
+  backgroundColor: '#355C7D',
+  color: '#b8fce4',
+  fontWeight: 'bold',
+  fontSize: '24px',
+  height: '40px',
+  width: '30%',
+  verticalAlign: 'middle',
+}
+
+const upgradeButtonStyle0 = {}
+const upgradeButtonStyle1 = {
+  padding: '4px',
+  border: '1px solid #3066BE',
+  backgroundColor: '#3066BE',
+  color: '#AEECEF',
+  fontWeight: 'bold',
+}
+const upgradeButtonStyle2 = {
+  padding: '4px',
+  width: '50%',
+  height: '25px',
+  border: '1px solid #6b8ea5',
+  borderRadius: '4px',
+  backgroundColor: '#b8fce4',
+  color: '#355C7D',
+  fontWeight: 'bold',
+}
+
 function UpgradeItem(props) {
-  let thTdStyle = upgradesThTdStyle0;
+  let tdStyle;
+  let buttonStyle;
+  switch(props.styleLevel) {
+    case 2:
+      tdStyle = upgradesTdStyle2;
+      buttonStyle = upgradeButtonStyle2;
+      break;
+    case 1:
+      tdStyle = upgradesTdStyle1;
+      buttonStyle = upgradeButtonStyle1;
+      break;
+    default:
+      tdStyle = upgradesTdStyle0;
+      buttonStyle = upgradeButtonStyle0;
+      break;
+  }
   return (
     <tr key={props.key} className='upgrade-item'>
-      <td style={thTdStyle}>{props.upgradeName}</td>
-      <td style={thTdStyle} className='compile-column'>
-        <button onClick={() => props.onUpgrade(props.upgradeIndex)}>
+      <td style={tdStyle}>{props.upgradeName}</td>
+      <td style={tdStyle} className='compile-column'>
+        <button style={buttonStyle}onClick={() => props.onUpgrade(props.upgradeIndex)}>
           Cost: {props.upgradeCost} 
         </button>
       </td>
@@ -207,38 +310,59 @@ function UpgradeItem(props) {
 }
 
 class UpgradesWidget extends Component {
-  renderItem(upgradeName, upgradeCost, upgradeIndex) {
+  renderItem(upgradeName, upgradeCost, upgradeIndex, styleLevel) {
     return (
       <UpgradeItem 
         onUpgrade={this.props.onUpgrade}
         upgradeName={upgradeName}
         upgradeCost={upgradeCost}
         upgradeIndex={upgradeIndex}
+        styleLevel={styleLevel}
       />
     );
   }
 
   render() {
-    let widgetStyle = upgradesWidgetStyle0;
-    let tableStyle = upgradesTableStyle0;
-    let thTdStyle = upgradesThTdStyle0;
-
+    let widgetStyle;
+    let tableStyle;
+    let thStyle;
+    let titleStyle;
+    switch(this.props.styleLevel) {
+      case 2:
+        thStyle = upgradesThStyle2;
+        tableStyle = upgradesTableStyle2;
+        widgetStyle = upgradesWidgetStyle2;
+        titleStyle = titleStyle2;
+        break;
+      case 1:
+        thStyle = upgradesThStyle1;
+        tableStyle = upgradesTableStyle1;
+        widgetStyle = upgradesWidgetStyle1;
+        titleStyle = titleStyle1;
+        break;
+      default:
+        thStyle = upgradesThStyle0;
+        tableStyle = upgradesTableStyle0;
+        widgetStyle = upgradesWidgetStyle0;
+        titleStyle = titleStyle0;
+        break;
+    }
     if(this.props.visibleWidgets.UpgradesTable) {
       return (
         <div className='upgrades-widget' style={widgetStyle}>
-          <h1>Modules</h1>
-          <table className='upgrades-table'>
+          <h1 style={titleStyle}>Modules</h1>
+          <table className='upgrades-table' style={tableStyle}>
             <thead>
             <tr>
-              <th style={thTdStyle}>Type</th>
-              <th style={thTdStyle}>Compile</th>
+              <th style={thStyle}>Type</th>
+              <th style={thStyle}>Compile</th>
             </tr>
             </thead>
 
             <tbody>
             {this.props.upgrades.map((item, index) => {
               if (!item.compiled && item.prerequisite && this.props.curPower >= item.upgradeCost)
-                return this.renderItem(item.upgradeName, item.upgradeCost, index);
+                return this.renderItem(item.upgradeName, item.upgradeCost, index, this.props.styleLevel);
               else
                 return null;
             })}
@@ -344,7 +468,7 @@ const mainBodyStyle0 = {
   flexWrap: 'wrap',
   justifyContent: 'space-between',
   height: '75%',
-  width: '70%',
+  width: '80%',
   minWidth: '800px',
   margin: '0 auto'
 }
@@ -353,10 +477,10 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentComputingPower: 0,
+      currentComputingPower: 100000,
       currentOverclockIncrement: 8,
       maxComputingPower: 1048576,
-      styleLevel: 2,
+      styleLevel: 0,
 
       visibleWidgets: {
         Navbar: true,
@@ -364,7 +488,7 @@ class App extends Component {
         AiTimerBar: true,
         AiFunctionBox: true,
         SingularityProgressBar: true,
-        SingularityButton: true,
+        SingularityButton: false,
       },
 
       upgrades: [
@@ -460,6 +584,7 @@ class App extends Component {
             upgrades={this.state.upgrades}
             onUpgrade={this.itemUpgraded.bind(this)}
             visibleWidgets={this.state.visibleWidgets}
+            styleLevel={this.state.styleLevel}
           />
           <TimerProgressBar visibleWidgets={this.state.visibleWidgets}/>
           <AiFunctionBox visibleWidgets={this.state.visibleWidgets}/>
