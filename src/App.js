@@ -222,8 +222,6 @@ const upgradesTableStyle1 = {
 }
 const upgradesTableStyle2 = {
   width: '100%',
-  borderLeft: '2px solid #355C7D',
-  borderRight: '2px solid #355C7D',
 }
 
 const upgradesTdStyle0 = {
@@ -327,47 +325,53 @@ class UpgradesWidget extends Component {
     let tableStyle;
     let thStyle;
     let titleStyle;
+    let tableDivStyle;
     switch(this.props.styleLevel) {
       case 2:
         thStyle = upgradesThStyle2;
         tableStyle = upgradesTableStyle2;
         widgetStyle = upgradesWidgetStyle2;
         titleStyle = titleStyle2;
+        tableDivStyle = {border: '2px solid #355C7D', height: '95%'};
         break;
       case 1:
         thStyle = upgradesThStyle1;
         tableStyle = upgradesTableStyle1;
         widgetStyle = upgradesWidgetStyle1;
         titleStyle = titleStyle1;
+        tableDivStyle = {};
         break;
       default:
         thStyle = upgradesThStyle0;
         tableStyle = upgradesTableStyle0;
         widgetStyle = upgradesWidgetStyle0;
         titleStyle = titleStyle0;
+        tableDivStyle = {};
         break;
     }
     if(this.props.visibleWidgets.UpgradesTable) {
       return (
         <div className='upgrades-widget' style={widgetStyle}>
           <h1 style={titleStyle}>Modules</h1>
-          <table className='upgrades-table' style={tableStyle}>
-            <thead>
-            <tr>
-              <th style={thStyle}>Type</th>
-              <th style={thStyle}>Compile</th>
-            </tr>
-            </thead>
+          <div style={tableDivStyle}>
+            <table className='upgrades-table' style={tableStyle}>
+              <thead>
+              <tr>
+                <th style={thStyle}>Type</th>
+                <th style={thStyle}>Compile</th>
+              </tr>
+              </thead>
 
-            <tbody>
-            {this.props.upgrades.map((item, index) => {
-              if (!item.compiled && item.prerequisite && this.props.curPower >= item.upgradeCost)
-                return this.renderItem(item.upgradeName, item.upgradeCost, index, this.props.styleLevel);
-              else
-                return null;
-            })}
-            </tbody>
-          </table>
+              <tbody>
+              {this.props.upgrades.map((item, index) => {
+                if (!item.compiled && item.prerequisite && this.props.curPower >= item.upgradeCost)
+                  return this.renderItem(item.upgradeName, item.upgradeCost, index, this.props.styleLevel);
+                else
+                  return null;
+              })}
+              </tbody>
+            </table>            
+          </div>
         </div>
       );
     }
@@ -398,15 +402,108 @@ class UpgradesWidget extends Component {
   }
 }
 
+const aiModuleStyle0 = {
+  width: '45%',
+  height: '100%',
+}
+const aiModuleStyle1 = {
+  width: '45%',
+  height: '100%',
+}
+const aiModuleStyle2 = {
+  width: '45%',
+  height: '100%',
+}
+
+const aiDivStyle0 = {
+}
+const aiDivStyle1 = {
+  border: '1px solid black',
+  padding: '16px',
+}
+const aiDivStyle2 = {
+  border: '2px solid #355C7D',
+  padding: '16px',
+  height: '90%',
+}
+
+const aiTextStyle0 = {}
+const aiTextStyle1 = {}
+const aiTextStyle2 = {
+  fontSize: '20px',
+}
+
+const purpleText = {
+  color: '#355C7D',
+}
+const cyanText = {
+  color: '#48D1CC',
+}
+
 /* function window */
-const aiCode = 'function compute() { for(var i = 0; i < 2; ++i) { ++ComputingPower; } }'
 class AiFunctionBox extends Component {
   render() {
+    let titleStyle;
+    let aiModuleStyle;
+    let aiDivStyle;
+    let aiTextStyle;
+    let purpleTextStyle = {};
+    let cyanTextStyle = {};
+    switch(this.props.styleLevel) {
+      case 2:
+        titleStyle = titleStyle2;
+        aiModuleStyle = aiModuleStyle2;
+        aiDivStyle = aiDivStyle2;
+        aiTextStyle = aiTextStyle2;
+        purpleTextStyle = purpleText;
+        cyanTextStyle = cyanText;
+        break;
+      case 1:
+        titleStyle = titleStyle1;
+        aiModuleStyle = aiModuleStyle1;
+        aiDivStyle = aiDivStyle1;
+        aiTextStyle = aiTextStyle1;
+        break;
+      default:
+        titleStyle = titleStyle0;
+        aiModuleStyle = aiModuleStyle0;
+        aiDivStyle = aiDivStyle0;
+        aiTextStyle = aiTextStyle0;
+        break;
+    }
     if (this.props.visibleWidgets.AiFunctionBox) {
       return (
-        <div className='ai-function-box'>
-          <h1>Artificial Intelligence</h1>
-          {aiCode}
+        <div style={aiModuleStyle} className='ai-function-box'>
+          <h1 style={titleStyle}>Artificial Intelligence</h1>
+          <div style={aiDivStyle}>
+            { this.props.styleLevel > 0 &&
+              <div>
+                <div style={aiTextStyle}>
+                  <p><span style={purpleTextStyle}>{'function '}</span><span style={cyanTextStyle}>{'compute'}</span>{"() {"}</p>
+                  <p>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <span style={purpleTextStyle}>{'for (var '}</span>
+                    <span style={cyanTextStyle}>{'i '}</span>
+                    {'= '}
+                    <span style={cyanTextStyle}>{'0'}</span>
+                    {'; i < '}
+                    <span style={cyanTextStyle}>{'2'}</span>
+                    {'; ++i) {'}
+                  </p>
+                  <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{" ++ComputingPower;"}</p>
+                  <p>&nbsp;&nbsp;&nbsp;&nbsp;{"}"}</p>
+                  <p>{"}"}</p>                
+                </div>
+                <div style={aiTextStyle}>
+                  <p>&nbsp;</p>               
+                </div>
+              </div>
+            }
+            { this.props.styleLevel === 0 &&
+              <div style={aiTextStyle}>
+                <p>{'function compute() { for(var i = 0; i < 2; ++i) { ++ComputingPower; }}'}</p>
+              </div>
+            }
+            </div>
         </div>
       );      
     }
@@ -416,13 +513,63 @@ class AiFunctionBox extends Component {
   }
 }
 
+const timerBarOuter0 = {
+  display: 'flex',
+  flexDirection: 'column-reverse',
+  width: '2%',
+  height: '90%'
+}
+const timerBarOuter1 = {
+  display: 'flex',
+  flexDirection: 'column-reverse',
+  border: '1px solid Black',
+  width: '1%',
+  height: '90%'
+}
+const timerBarOuter2 = {
+  display: 'flex',
+  flexDirection: 'column-reverse',
+  border: '2px solid #355C7D',
+  borderRadius: '12px',
+  width: '2%',
+  height: '90%'
+}
+const timerBarInner0 = {
+}
+const timerBarInner1 = {
+  backgroundColor: '#3066BE',
+  width: '100%',
+  height: '25%',
+}
+const timerBarInner2 = {
+  backgroundColor: '#b8fce4',
+  width: '100%',
+  height: '25%',
+  borderRadius: '12px',
+}
 /* income timer progress bar */
 class TimerProgressBar extends Component {
   render() {
+    let outerStyle;
+    let innerStyle;
+    switch(this.props.styleLevel) {
+      case 2:
+        outerStyle = timerBarOuter2;
+        innerStyle = timerBarInner2;
+        break;
+      case 1:
+        outerStyle = timerBarOuter1;
+        innerStyle = timerBarInner1;
+        break;
+      default:
+        outerStyle = timerBarOuter0;
+        innerStyle = timerBarInner0;
+        break;
+    }
     if (this.props.visibleWidgets.AiTimerBar) {
       return (
-        <div className='timer-bar-outer'>
-          <div className='timer-bar-inner'></div>
+        <div style={outerStyle} className='timer-bar-outer'>
+          <div style={innerStyle}className='timer-bar-inner'></div>
         </div>
       );      
     }
@@ -432,12 +579,18 @@ class TimerProgressBar extends Component {
   }
 }
 
+const singularityBarOuter0 = {
+  backgroundColor: 'Cornsilk',
+  margin: '1% auto',
+  height: '20px',
+  width: '60%'
+}
 /* win game progress bar */
 class SingularityProgressBar extends Component {
   render() {
     if (this.props.visibleWidgets.SingularityProgressBar) {
       return (
-        <div className='singularity-bar-outer'>
+        <div className='singularity-bar-outer' style={singularityBarOuter0}>
           <div className='singularity-bar-inner' style={{width: this.props.curProgress + '%'}}></div>
         </div>
       );
@@ -448,12 +601,19 @@ class SingularityProgressBar extends Component {
   }
 }
 
+const singularityButton0 = {
+  marginLeft: '48%',
+  marginRight: 'auto',
+  marginTop: '16px',
+  width: '4%',
+  height: '4%'
+}
 /* singularity button */
 function SingularityButton(props) {
   if(props.visibleWidgets.SingularityButton) {
     return (
       <div>
-        <img className='create-singularity' src={logo} alt={'win'}/>
+        <img className='create-singularity' src={logo} alt={'win'} style={singularityButton0}/>
       </div>
     ); 
   }
@@ -466,6 +626,7 @@ function SingularityButton(props) {
 const mainBodyStyle0 = {
   display: 'flex',
   flexWrap: 'wrap',
+  alignItems: 'center',
   justifyContent: 'space-between',
   height: '75%',
   width: '80%',
@@ -480,7 +641,7 @@ class App extends Component {
       currentComputingPower: 100000,
       currentOverclockIncrement: 8,
       maxComputingPower: 1048576,
-      styleLevel: 0,
+      styleLevel: 1,
 
       visibleWidgets: {
         Navbar: true,
@@ -488,7 +649,7 @@ class App extends Component {
         AiTimerBar: true,
         AiFunctionBox: true,
         SingularityProgressBar: true,
-        SingularityButton: false,
+        SingularityButton: true,
       },
 
       upgrades: [
@@ -586,14 +747,20 @@ class App extends Component {
             visibleWidgets={this.state.visibleWidgets}
             styleLevel={this.state.styleLevel}
           />
-          <TimerProgressBar visibleWidgets={this.state.visibleWidgets}/>
-          <AiFunctionBox visibleWidgets={this.state.visibleWidgets}/>
+          <TimerProgressBar 
+            visibleWidgets={this.state.visibleWidgets}
+            styleLevel={this.state.styleLevel}
+          />
+          <AiFunctionBox 
+            visibleWidgets={this.state.visibleWidgets}
+            styleLevel={this.state.styleLevel}
+          />
         </div>
+        <SingularityButton visibleWidgets={this.state.visibleWidgets}/>
         <SingularityProgressBar 
           curProgress={100*(this.state.currentComputingPower/this.state.maxComputingPower)}
           visibleWidgets={this.state.visibleWidgets}
         />
-        <SingularityButton visibleWidgets={this.state.visibleWidgets}/>
       </div>
     );
   }
