@@ -657,7 +657,7 @@ const singularityButton0 = {
 }
 /* singularity button */
 function SingularityButton(props) {
-  if(props.visibleWidgets.SingularityButton) {
+  if(props.visible) {
     return (
       <div>
         <img className='create-singularity' src={logo} alt={'win'} style={singularityButton0}/>
@@ -673,6 +673,15 @@ function SingularityButton(props) {
 const mainBodyStyle0 = {
   display: 'flex',
   flexWrap: 'wrap',
+  height: '90%',
+  width: '100%',
+  minWidth: '800px',
+  margin: '0 auto'
+}
+
+const mainBodyStyle1 = {
+  display: 'flex',
+  flexWrap: 'wrap',
   alignItems: 'center',
   justifyContent: 'space-between',
   height: '75%',
@@ -681,35 +690,59 @@ const mainBodyStyle0 = {
   margin: '0 auto'
 }
 
+const mainBodyStyle2 = {
+  display: 'flex',
+  flexWrap: 'wrap',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  height: '75%',
+  width: '80%',
+  minWidth: '800px',
+  margin: '0 auto',
+  backgroundColor: 'AliceBlue'
+}
+
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentComputingPower: 100000,
-      currentOverclockIncrement: 8,
-      maxComputingPower: 1048576,
-      styleLevel: 2,
+      currentComputingPower: 0,
+      currentOverclockIncrement: 16,
+      maxComputingPower: 262144,
+      styleLevel: 0,
 
       aiTimerCur: 0,
       aiTimerMax: 30000,
-      aiCurIncrement: 32,
+      aiCurIncrement: 64,
 
       visibleWidgets: {
-        Navbar: true,
-        UpgradesTable: true,
-        AiTimerBar: true,
-        AiFunctionBox: true,
-        SingularityProgressBar: true,
-        SingularityButton: true,
+        Navbar: false,
+        UpgradesTable: false,
+        AiTimerBar: false,
+        AiFunctionBox: false,
+        SingularityProgressBar: false,
       },
 
       upgrades: [
-        {upgradeName: 'High-Energy Capacitors', upgradeCost: 512, compiled: false, prerequisite: true},
-        {upgradeName: 'Quantum Energy States', upgradeCost: 2048, compiled: false, prerequisite: false},
-        {upgradeName: 'Applied Superconductivity', upgradeCost: 16384, compiled: false, prerequisite: false},
-        {upgradeName: 'Digital Navigation', upgradeCost: 256, compiled: false, prerequisite: true},
-        {upgradeName: 'Assembly Patterns', upgradeCost: 2048, compiled: false, prerequisite: true},
-        {upgradeName: 'Construction Templates', upgradeCost: 65536, compiled: false, prerequisite: true},
+        {upgradeName: 'High-Energy Capacitors', upgradeCost: 512, compiled: false, prerequisite: true}, //0 oc 0
+        {upgradeName: 'Quantum Energy States', upgradeCost: 16384, compiled: false, prerequisite: false},  //1 oc 1
+        {upgradeName: 'Applied Superconductivity', upgradeCost: 32768, compiled: false, prerequisite: false}, //2 oc 2
+        {upgradeName: 'Digital Navigation', upgradeCost: 4096, compiled: false, prerequisite: true}, //3 navbar
+        {upgradeName: 'Assembly Patterns', upgradeCost: 2048, compiled: false, prerequisite: true}, //4 upgrades table
+        {upgradeName: 'Construction Templates', upgradeCost: 131072, compiled: false, prerequisite: true}, //5 win progress
+        {upgradeName: 'AI level 1', upgradeCost: 2048, compiled: false, prerequisite: false},//6 ai 0
+        {upgradeName: 'AI Progress Bar', upgradeCost: 4096, compiled: false, prerequisite: false},//7 ai bar
+        {upgradeName: 'AI level 2', upgradeCost: 8192, compiled: false, prerequisite: false},//8 ai 1
+        {upgradeName: 'Style level 1', upgradeCost: 4096, compiled: false, prerequisite: true},//9 style 0
+        {upgradeName: 'Style level 2', upgradeCost: 32768, compiled: false, prerequisite: false},//10 style 1
+        // reset
+        // about
+        // win button & winning ofc
+        // icons
+        // title bar info
+        // saving/loading
+        // animations if possible
+        // some more upgrade tiers to make it more worthawhile
       ],
     };
   }
@@ -776,7 +809,7 @@ class App extends Component {
     //can code invidual event handlers for upgrades but i'm lazy and this is a proof of concept app
     switch(itemIndex) {
       case 0:
-        this.setState({currentOverclockIncrement: 32});
+        this.setState({currentOverclockIncrement: 64});
         upgrades[1].prerequisite = true;
         break;
       case 1:
@@ -791,9 +824,29 @@ class App extends Component {
         break;
       case 4:
         this.changeVisibility('UpgradesTable', true);
+        upgrades[6].prerequisite = true;
         break;
       case 5:
         this.changeVisibility('SingularityProgressBar', true);
+        break;
+      case 6:
+        this.changeVisibility('AiFunctionBox', true);
+        upgrades[7].prerequisite = true;
+        upgrades[8].prerequisite = true;
+        break;
+      case 7:
+        this.changeVisibility('AiTimerBar', true);
+        break;
+      case 8:
+        this.setState({aiCurIncrement: 256});
+        break;
+      case 9:
+        debugger;
+        this.setState({styleLevel: 1});
+        upgrades[10].prerequisite = true;
+        break;
+      case 10:
+        this.setState({styleLevel: 2});
         break;
       default:
         console.log('Invalid Upgrade');
@@ -804,6 +857,18 @@ class App extends Component {
   }
 
   render() {
+    let mainStyle;
+    switch(this.state.styleLevel) {
+      case 2:
+        mainStyle = mainBodyStyle2;
+        break;
+      case 1:
+        mainStyle = mainBodyStyle1;
+        break;
+      default:
+        mainStyle = mainBodyStyle0;
+        break;
+    }
     return (
       <div className='App'>
         <Navbar
@@ -812,7 +877,7 @@ class App extends Component {
           visibleWidgets={this.state.visibleWidgets}
           styleLevel={this.state.styleLevel}
         />
-        <div className='main-body' style={mainBodyStyle0}>
+        <div className='main-body' style={mainStyle}>
           <UpgradesWidget 
             curPower={this.state.currentComputingPower}
             upgrades={this.state.upgrades}
@@ -832,12 +897,12 @@ class App extends Component {
             curAiTimerInterval={this.state.aiTimerMax}
           />
         </div>
-        <SingularityButton visibleWidgets={this.state.visibleWidgets}/>
         <SingularityProgressBar 
           curProgress={100*(this.state.currentComputingPower/this.state.maxComputingPower)}
           visibleWidgets={this.state.visibleWidgets}
           styleLevel={this.state.styleLevel}
         />
+        <SingularityButton visible={this.state.currentComputingPower===this.state.maxComputingPower}/>
       </div>
     );
   }
