@@ -493,10 +493,36 @@ class AiFunctionBox extends Component {
                   <p>&nbsp;&nbsp;&nbsp;&nbsp;{"}"}</p>
                   <p>{"}"}</p>                
                 </div>
-                <div style={aiTextStyle}>
-                  <p>&nbsp;</p>
-                  <p>{'setInterval(compute, '}<span style={cyanTextStyle}>{this.props.curAiTimerInterval}</span>{');'}</p>               
-                </div>
+                { this.props.aiMultiplier > 1 &&
+                  <div style={aiTextStyle}>
+                    <p><span style={purpleTextStyle}>{'function '}</span><span style={cyanTextStyle}>{'tuneAiHyperparameters'}</span>{"() {"}</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;
+                      <span style={purpleTextStyle}>{'for (var '}</span>
+                      <span style={cyanTextStyle}>{'i '}</span>
+                      {'= '}
+                      <span style={cyanTextStyle}>{'0'}</span>
+                      {'; i < '}
+                      <span style={cyanTextStyle}>{this.props.aiMultiplier}</span>
+                      {'; ++i) {'}
+                    </p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{" compute();"}</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;{"}"}</p>
+                    <p>{"}"}</p>
+                  </div>
+
+                  &&
+                  
+                  <div style={aiTextStyle}>
+                    <p>&nbsp;</p>
+                    <p>{'setInterval(tuneAiHyperparameters, '}<span style={cyanTextStyle}>{this.props.curAiTimerInterval}</span>{');'}</p>               
+                  </div>
+                }
+                { this.props.aiMultiplier === 1 &&
+                  <div style={aiTextStyle}>
+                    <p>&nbsp;</p>
+                    <p>{'setInterval(compute, '}<span style={cyanTextStyle}>{this.props.curAiTimerInterval}</span>{');'}</p>               
+                  </div>
+                }
               </div>
             }
             { this.props.styleLevel === 0 &&
@@ -714,6 +740,7 @@ class App extends Component {
       aiTimerCur: 0,
       aiTimerMax: 30000,
       aiCurIncrement: 64,
+      aiMultiplier: 1,
 
       visibleWidgets: {
         Navbar: false,
@@ -735,6 +762,7 @@ class App extends Component {
         {upgradeName: 'AI level 2', upgradeCost: 8192, compiled: false, prerequisite: false},//8 ai 1
         {upgradeName: 'Style level 1', upgradeCost: 4096, compiled: false, prerequisite: true},//9 style 0
         {upgradeName: 'Style level 2', upgradeCost: 32768, compiled: false, prerequisite: false},//10 style 1
+        {upgradeName: 'AI level 3', upgradeCost: 16384, compiled: false, prerequisite: false},//11 style 2
         // reset
         // about
         // win button & winning ofc
@@ -790,7 +818,7 @@ class App extends Component {
       return;
     let newTimerCur = this.state.aiTimerCur + 10;
     if (newTimerCur > this.state.aiTimerMax) {
-      this.changePower(this.state.aiCurIncrement);
+      this.changePower(this.state.aiCurIncrement*this.state.aiMultiplier);
       newTimerCur = 0;
     }
     this.setState({
@@ -839,6 +867,7 @@ class App extends Component {
         break;
       case 8:
         this.setState({aiCurIncrement: 256});
+        upgrades[11].prerequisite = true;
         break;
       case 9:
         debugger;
@@ -847,6 +876,9 @@ class App extends Component {
         break;
       case 10:
         this.setState({styleLevel: 2});
+        break;
+      case 11:
+        this.setState({aiMultiplier: 5});
         break;
       default:
         console.log('Invalid Upgrade');
@@ -895,6 +927,7 @@ class App extends Component {
             styleLevel={this.state.styleLevel}
             curIncrementVal={this.state.aiCurIncrement}
             curAiTimerInterval={this.state.aiTimerMax}
+            curAiMultiplier={this.state.aiMultiplier}
           />
         </div>
         <SingularityProgressBar 
