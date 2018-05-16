@@ -157,7 +157,9 @@ class Navbar extends Component {
             styleLevel={this.props.styleLevel}
           />
           <div>
-            <button className='reset-game' style={buttonStyle}>Reset</button>  
+            {this.props.visibleWidgets.ResetButton &&
+              <button className='reset-game' style={buttonStyle} onClick={this.props.resetGame}>Reset</button>  
+            }
             <button className='about-game' style={buttonStyle}>About</button>          
           </div>
         </header>
@@ -511,7 +513,7 @@ class AiFunctionBox extends Component {
                   </div>
 
                   &&
-                  
+
                   <div style={aiTextStyle}>
                     <p>&nbsp;</p>
                     <p>{'setInterval(tuneAiHyperparameters, '}<span style={cyanTextStyle}>{this.props.curAiTimerInterval}</span>{');'}</p>               
@@ -728,51 +730,54 @@ const mainBodyStyle2 = {
   backgroundColor: 'AliceBlue'
 }
 
+const defaultState = {
+  currentComputingPower: 0,
+  currentOverclockIncrement: 16,
+  maxComputingPower: 262144,
+  styleLevel: 0,
+
+  aiTimerCur: 0,
+  aiTimerMax: 30000,
+  aiCurIncrement: 64,
+  aiMultiplier: 1,
+
+  visibleWidgets: {
+    Navbar: false,
+    UpgradesTable: false,
+    AiTimerBar: false,
+    AiFunctionBox: false,
+    SingularityProgressBar: false,
+    ResetButton: false,
+  },
+
+  upgrades: [
+    {upgradeName: 'High-Energy Capacitors', upgradeCost: 512, compiled: false, prerequisite: true}, //0 oc 0
+    {upgradeName: 'Quantum Energy States', upgradeCost: 16384, compiled: false, prerequisite: false},  //1 oc 1
+    {upgradeName: 'Applied Superconductivity', upgradeCost: 32768, compiled: false, prerequisite: false}, //2 oc 2
+    {upgradeName: 'Digital Navigation', upgradeCost: 4096, compiled: false, prerequisite: true}, //3 navbar
+    {upgradeName: 'Assembly Patterns', upgradeCost: 2048, compiled: false, prerequisite: true}, //4 upgrades table
+    {upgradeName: 'Construction Templates', upgradeCost: 131072, compiled: false, prerequisite: true}, //5 win progress
+    {upgradeName: 'AI level 1', upgradeCost: 2048, compiled: false, prerequisite: false},//6 ai 0
+    {upgradeName: 'AI Progress Bar', upgradeCost: 4096, compiled: false, prerequisite: false},//7 ai bar
+    {upgradeName: 'AI level 2', upgradeCost: 8192, compiled: false, prerequisite: false},//8 ai 1
+    {upgradeName: 'Style level 1', upgradeCost: 4096, compiled: false, prerequisite: true},//9 style 0
+    {upgradeName: 'Style level 2', upgradeCost: 32768, compiled: false, prerequisite: false},//10 style 1
+    {upgradeName: 'AI level 3', upgradeCost: 16384, compiled: false, prerequisite: false},//11 style 2
+    {upgradeName: 'Reset Game Button', upgradeCost: 8192, compiled: false, prerequisite: false},//12 reset
+    // about
+    // win button & winning ofc
+    // icons
+    // title bar info
+    // saving/loading
+    // animations if possible
+    // some more upgrade tiers to make it more worthawhile
+  ],
+};
+
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      currentComputingPower: 0,
-      currentOverclockIncrement: 16,
-      maxComputingPower: 262144,
-      styleLevel: 0,
-
-      aiTimerCur: 0,
-      aiTimerMax: 30000,
-      aiCurIncrement: 64,
-      aiMultiplier: 1,
-
-      visibleWidgets: {
-        Navbar: false,
-        UpgradesTable: false,
-        AiTimerBar: false,
-        AiFunctionBox: false,
-        SingularityProgressBar: false,
-      },
-
-      upgrades: [
-        {upgradeName: 'High-Energy Capacitors', upgradeCost: 512, compiled: false, prerequisite: true}, //0 oc 0
-        {upgradeName: 'Quantum Energy States', upgradeCost: 16384, compiled: false, prerequisite: false},  //1 oc 1
-        {upgradeName: 'Applied Superconductivity', upgradeCost: 32768, compiled: false, prerequisite: false}, //2 oc 2
-        {upgradeName: 'Digital Navigation', upgradeCost: 4096, compiled: false, prerequisite: true}, //3 navbar
-        {upgradeName: 'Assembly Patterns', upgradeCost: 2048, compiled: false, prerequisite: true}, //4 upgrades table
-        {upgradeName: 'Construction Templates', upgradeCost: 131072, compiled: false, prerequisite: true}, //5 win progress
-        {upgradeName: 'AI level 1', upgradeCost: 2048, compiled: false, prerequisite: false},//6 ai 0
-        {upgradeName: 'AI Progress Bar', upgradeCost: 4096, compiled: false, prerequisite: false},//7 ai bar
-        {upgradeName: 'AI level 2', upgradeCost: 8192, compiled: false, prerequisite: false},//8 ai 1
-        {upgradeName: 'Style level 1', upgradeCost: 4096, compiled: false, prerequisite: true},//9 style 0
-        {upgradeName: 'Style level 2', upgradeCost: 32768, compiled: false, prerequisite: false},//10 style 1
-        {upgradeName: 'AI level 3', upgradeCost: 16384, compiled: false, prerequisite: false},//11 style 2
-        // reset
-        // about
-        // win button & winning ofc
-        // icons
-        // title bar info
-        // saving/loading
-        // animations if possible
-        // some more upgrade tiers to make it more worthawhile
-      ],
-    };
+    this.state = defaultState;
   }
 
   componentDidMount() {
@@ -826,6 +831,11 @@ class App extends Component {
     });
   }
 
+  resetGame() {
+    let originalState = defaultState;
+    this.setState(originalState);
+  }
+
   itemUpgraded(itemIndex) {
     let upgrades = this.state.upgrades.slice();
     let upgrade = upgrades[itemIndex];
@@ -849,6 +859,7 @@ class App extends Component {
         break;
       case 3:
         this.changeVisibility('Navbar', true);
+        upgrades[12].prerequisite = true;
         break;
       case 4:
         this.changeVisibility('UpgradesTable', true);
@@ -880,6 +891,9 @@ class App extends Component {
       case 11:
         this.setState({aiMultiplier: 5});
         break;
+      case 12:
+        this.changeVisibility('ResetButton', true);
+        break;
       default:
         console.log('Invalid Upgrade');
     }
@@ -906,6 +920,7 @@ class App extends Component {
         <Navbar
           curPower={this.state.currentComputingPower}
           overclock={this.overclock.bind(this)}
+          resetGame={this.resetGame.bind(this)}
           visibleWidgets={this.state.visibleWidgets}
           styleLevel={this.state.styleLevel}
         />
