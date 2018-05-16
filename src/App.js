@@ -486,7 +486,7 @@ class AiFunctionBox extends Component {
                     {'= '}
                     <span style={cyanTextStyle}>{'0'}</span>
                     {'; i < '}
-                    <span style={cyanTextStyle}>{'2'}</span>
+                    <span style={cyanTextStyle}>{this.props.curIncrementVal}</span>
                     {'; ++i) {'}
                   </p>
                   <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{" ++ComputingPower;"}</p>
@@ -494,13 +494,15 @@ class AiFunctionBox extends Component {
                   <p>{"}"}</p>                
                 </div>
                 <div style={aiTextStyle}>
-                  <p>&nbsp;</p>               
+                  <p>&nbsp;</p>
+                  <p>{'setInterval(compute, '}<span style={cyanTextStyle}>{this.props.curAiTimerInterval}</span>{');'}</p>               
                 </div>
               </div>
             }
             { this.props.styleLevel === 0 &&
               <div style={aiTextStyle}>
-                <p>{'function compute() { for(var i = 0; i < 2; ++i) { ++ComputingPower; }}'}</p>
+                <p>{'function compute() { for(var i = 0; i < ' + this.props.curIncrementVal + '; ++i) { ++ComputingPower; }}'}</p>
+                <p>{'setInterval(compute, ' + this.props.curAiTimerInterval + ');'}</p>
               </div>
             }
             </div>
@@ -535,16 +537,16 @@ const timerBarOuter2 = {
   height: '90%'
 }
 const timerBarInner0 = {
+  backgroundColor: 'Black',
+  width: '100%',
 }
 const timerBarInner1 = {
   backgroundColor: '#3066BE',
   width: '100%',
-  height: '25%',
 }
 const timerBarInner2 = {
   backgroundColor: '#b8fce4',
   width: '100%',
-  height: '25%',
   borderRadius: '12px',
 }
 /* income timer progress bar */
@@ -552,18 +554,20 @@ class TimerProgressBar extends Component {
   render() {
     let outerStyle;
     let innerStyle;
+    let heightString = '';
+    heightString = String(this.props.curProgress) + '%';
     switch(this.props.styleLevel) {
       case 2:
         outerStyle = timerBarOuter2;
-        innerStyle = timerBarInner2;
+        innerStyle = Object.assign({height: heightString}, timerBarInner2);
         break;
       case 1:
         outerStyle = timerBarOuter1;
-        innerStyle = timerBarInner1;
+        innerStyle = Object.assign({height: heightString}, timerBarInner1);
         break;
       default:
         outerStyle = timerBarOuter0;
-        innerStyle = timerBarInner0;
+        innerStyle = Object.assign({height: heightString}, timerBarInner0);
         break;
     }
     if (this.props.visibleWidgets.AiTimerBar) {
@@ -580,18 +584,61 @@ class TimerProgressBar extends Component {
 }
 
 const singularityBarOuter0 = {
-  backgroundColor: 'Cornsilk',
+  width: '80%',
+  height: '3%'
+}
+const singularityBarOuter1 = {
+  border: '1px solid Black',
   margin: '1% auto',
-  height: '20px',
-  width: '60%'
+  width: '80%',
+  height: '3%'
+}
+const singularityBarOuter2 = {
+  border: '2px solid #355C7D',
+  borderRadius: '12px',
+  margin: '1% auto',
+  width: '80%',
+  height: '3%'
+}
+const singularityBarInner0 = {
+  backgroundColor: 'Black',
+  height: '100%'
+}
+const singularityBarInner1 = {
+  backgroundColor: '#3066BE',
+  height: '100%'
+}
+const singularityBarInner2 = {
+  backgroundColor: '#b8fce4',
+  height: '100%',
+  borderRadius: '12px',
 }
 /* win game progress bar */
 class SingularityProgressBar extends Component {
   render() {
+    let outerStyle = {};
+    let innerStyle = {};
+    let widthString = '';
+    widthString = String(this.props.curProgress) + '%';
+    switch(this.props.styleLevel) {
+      case 2:
+        outerStyle = singularityBarOuter2;
+        innerStyle = Object.assign({width: widthString}, singularityBarInner2);
+        break;
+      case 1:
+        outerStyle = singularityBarOuter1;
+        innerStyle = Object.assign({width: widthString}, singularityBarInner1);
+        break;
+      default:
+        outerStyle = singularityBarOuter0;
+        innerStyle = Object.assign({width: widthString}, singularityBarInner0);
+        break;
+    }
+
     if (this.props.visibleWidgets.SingularityProgressBar) {
       return (
-        <div className='singularity-bar-outer' style={singularityBarOuter0}>
-          <div className='singularity-bar-inner' style={{width: this.props.curProgress + '%'}}></div>
+        <div className='singularity-bar-outer' style={outerStyle}>
+          <div className='singularity-bar-inner' style={innerStyle}></div>
         </div>
       );
     }
@@ -604,7 +651,7 @@ class SingularityProgressBar extends Component {
 const singularityButton0 = {
   marginLeft: '48%',
   marginRight: 'auto',
-  marginTop: '16px',
+  marginTop: '8px',
   width: '4%',
   height: '4%'
 }
@@ -641,7 +688,11 @@ class App extends Component {
       currentComputingPower: 100000,
       currentOverclockIncrement: 8,
       maxComputingPower: 1048576,
-      styleLevel: 1,
+      styleLevel: 2,
+
+      aiTimerCur: 0,
+      aiTimerMax: 30000,
+      aiCurIncrement: 32,
 
       visibleWidgets: {
         Navbar: true,
@@ -661,6 +712,15 @@ class App extends Component {
         {upgradeName: 'Construction Templates', upgradeCost: 65536, compiled: false, prerequisite: true},
       ],
     };
+  }
+
+  componentDidMount() {
+    console.log('Component game started');
+    this.intervalId = setInterval(() => this.incrementAiTimer(), 10);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.intervalId);
   }
 
   changePower(val) {
@@ -689,6 +749,19 @@ class App extends Component {
 
     this.setState({
       visibleWidgets: visibleWidgets
+    });
+  }
+
+  incrementAiTimer() {
+    if (!this.state.visibleWidgets.AiFunctionBox)
+      return;
+    let newTimerCur = this.state.aiTimerCur + 10;
+    if (newTimerCur > this.state.aiTimerMax) {
+      this.changePower(this.state.aiCurIncrement);
+      newTimerCur = 0;
+    }
+    this.setState({
+      aiTimerCur: newTimerCur
     });
   }
 
@@ -750,16 +823,20 @@ class App extends Component {
           <TimerProgressBar 
             visibleWidgets={this.state.visibleWidgets}
             styleLevel={this.state.styleLevel}
+            curProgress={100*(this.state.aiTimerCur/this.state.aiTimerMax)}
           />
           <AiFunctionBox 
             visibleWidgets={this.state.visibleWidgets}
             styleLevel={this.state.styleLevel}
+            curIncrementVal={this.state.aiCurIncrement}
+            curAiTimerInterval={this.state.aiTimerMax}
           />
         </div>
         <SingularityButton visibleWidgets={this.state.visibleWidgets}/>
         <SingularityProgressBar 
           curProgress={100*(this.state.currentComputingPower/this.state.maxComputingPower)}
           visibleWidgets={this.state.visibleWidgets}
+          styleLevel={this.state.styleLevel}
         />
       </div>
     );
