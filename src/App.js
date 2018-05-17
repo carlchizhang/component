@@ -160,7 +160,9 @@ class Navbar extends Component {
             {this.props.visibleWidgets.ResetButton &&
               <button className='reset-game' style={buttonStyle} onClick={this.props.resetGame}>Reset</button>  
             }
-            <button className='about-game' style={buttonStyle}>About</button>          
+            {this.props.visibleWidgets.AboutButton &&
+              <button className='about-game' style={buttonStyle} onClick={this.props.openAbout}>About</button> 
+            }
           </div>
         </header>
       );      
@@ -421,11 +423,11 @@ const aiDivStyle0 = {
 }
 const aiDivStyle1 = {
   border: '1px solid black',
-  padding: '16px',
+  padding: '14px',
 }
 const aiDivStyle2 = {
   border: '2px solid #355C7D',
-  padding: '16px',
+  padding: '14px',
   height: '90%',
 }
 
@@ -495,36 +497,38 @@ class AiFunctionBox extends Component {
                   <p>&nbsp;&nbsp;&nbsp;&nbsp;{"}"}</p>
                   <p>{"}"}</p>                
                 </div>
-                { this.props.aiMultiplier > 1 &&
-                  <div style={aiTextStyle}>
-                    <p><span style={purpleTextStyle}>{'function '}</span><span style={cyanTextStyle}>{'tuneAiHyperparameters'}</span>{"() {"}</p>
-                    <p>&nbsp;&nbsp;&nbsp;&nbsp;
-                      <span style={purpleTextStyle}>{'for (var '}</span>
-                      <span style={cyanTextStyle}>{'i '}</span>
-                      {'= '}
-                      <span style={cyanTextStyle}>{'0'}</span>
-                      {'; i < '}
-                      <span style={cyanTextStyle}>{this.props.aiMultiplier}</span>
-                      {'; ++i) {'}
-                    </p>
-                    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{" compute();"}</p>
-                    <p>&nbsp;&nbsp;&nbsp;&nbsp;{"}"}</p>
-                    <p>{"}"}</p>
-                  </div>
-
-                  &&
-
-                  <div style={aiTextStyle}>
-                    <p>&nbsp;</p>
-                    <p>{'setInterval(tuneAiHyperparameters, '}<span style={cyanTextStyle}>{this.props.curAiTimerInterval}</span>{');'}</p>               
-                  </div>
-                }
-                { this.props.aiMultiplier === 1 &&
-                  <div style={aiTextStyle}>
-                    <p>&nbsp;</p>
-                    <p>{'setInterval(compute, '}<span style={cyanTextStyle}>{this.props.curAiTimerInterval}</span>{');'}</p>               
-                  </div>
-                }
+              </div>
+            }
+            { this.props.curAiMultiplier === 1 &&
+              <div>
+                <div style={aiTextStyle}>
+                  <p>&nbsp;</p>
+                  <p>{'setInterval(compute, '}<span style={cyanTextStyle}>{this.props.curAiTimerInterval}</span>{');'}</p>               
+                </div>
+              </div>
+            }
+            { this.props.curAiMultiplier > 1 &&
+              <div>
+                <div style={aiTextStyle}>
+                  <p>&nbsp;</p>
+                  <p><span style={purpleTextStyle}>{'function '}</span><span style={cyanTextStyle}>{'tuneAiHyperparameters'}</span>{"() {"}</p>
+                  <p>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <span style={purpleTextStyle}>{'for (var '}</span>
+                    <span style={cyanTextStyle}>{'i '}</span>
+                    {'= '}
+                    <span style={cyanTextStyle}>{'0'}</span>
+                    {'; i < '}
+                    <span style={cyanTextStyle}>{this.props.curAiMultiplier}</span>
+                    {'; ++i) {'}
+                  </p>
+                  <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{" compute();"}</p>
+                  <p>&nbsp;&nbsp;&nbsp;&nbsp;{"}"}</p>
+                  <p>{"}"}</p>
+                </div>
+                <div style={aiTextStyle}>
+                  <p>&nbsp;</p>
+                  <p>{'setInterval(tuneAiHyperparameters, '}<span style={cyanTextStyle}>{this.props.curAiTimerInterval}</span>{');'}</p>               
+                </div>
               </div>
             }
             { this.props.styleLevel === 0 &&
@@ -697,6 +701,63 @@ function SingularityButton(props) {
   }
 }
 
+const popupStyle1 = {
+  display: 'block',
+  position: 'fixed',
+  zIndex: '1',
+  right: '0',
+  top: '0',
+  width: '40%',
+  height: '100%',
+  padding: '20px',
+  borderLeft: '1px solid #355C7D',
+  backgroundColor: 'AliceBlue',
+  color: '#355C7D',
+}
+const popupStyle2 = {
+  display: 'block',
+  position: 'fixed',
+  zIndex: '1',
+  right: '0',
+  top: '0',
+  width: '40%',
+  height: '100%',
+  padding: '20px',
+  borderLeft: '2px solid #b8fce4',
+  backgroundColor: '#355C7D',
+  color: '#b8fce4',
+}
+function AboutPopup(props) {
+  let popupStyle;
+  let buttonStyle;
+  switch(props.styleLevel) {
+      case 2:
+        popupStyle = popupStyle2;
+        buttonStyle = ocButtonStyle2;
+        break;
+      case 1:
+        popupStyle = popupStyle1;
+        buttonStyle = ocButtonStyle1;
+        break;
+      default:
+        popupStyle = popupStyle1;
+        buttonStyle = ocButtonStyle0;
+        break;
+  }
+  if(props.visible) {
+    return (
+      <div className='about-popup' style={popupStyle}>
+        <button onClick={props.closeAbout} style={buttonStyle}>X</button>
+        <p>Hi, thanks for trying out this little game!</p>
+        <p>This clicker game was created purely in React. It was mostly made as a short learning introduction to how React component & states work.</p>
+      </div>
+    );
+  }
+  else {
+    return null;
+  }
+}
+
 /* main game stuff */
 const mainBodyStyle0 = {
   display: 'flex',
@@ -727,11 +788,10 @@ const mainBodyStyle2 = {
   width: '80%',
   minWidth: '800px',
   margin: '0 auto',
-  backgroundColor: 'AliceBlue'
 }
 
 const defaultState = {
-  currentComputingPower: 0,
+  currentComputingPower: 262144,
   currentOverclockIncrement: 16,
   maxComputingPower: 262144,
   styleLevel: 0,
@@ -748,6 +808,8 @@ const defaultState = {
     AiFunctionBox: false,
     SingularityProgressBar: false,
     ResetButton: false,
+    AboutButton: false,
+    AboutPopup: false,
   },
 
   upgrades: [
@@ -763,8 +825,8 @@ const defaultState = {
     {upgradeName: 'Style level 1', upgradeCost: 4096, compiled: false, prerequisite: true},//9 style 0
     {upgradeName: 'Style level 2', upgradeCost: 32768, compiled: false, prerequisite: false},//10 style 1
     {upgradeName: 'AI level 3', upgradeCost: 16384, compiled: false, prerequisite: false},//11 style 2
-    {upgradeName: 'Reset Game Button', upgradeCost: 8192, compiled: false, prerequisite: false},//12 reset
-    // about
+    {upgradeName: 'Reset Button', upgradeCost: 8192, compiled: false, prerequisite: false},//12 reset
+    {upgradeName: 'About Button', upgradeCost: 8192, compiled: false, prerequisite: false},//13 about
     // win button & winning ofc
     // icons
     // title bar info
@@ -777,7 +839,8 @@ const defaultState = {
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = defaultState;
+    this.state = JSON.parse(JSON.stringify(defaultState));
+
   }
 
   componentDidMount() {
@@ -832,8 +895,12 @@ class App extends Component {
   }
 
   resetGame() {
-    let originalState = defaultState;
+    let originalState = JSON.parse(JSON.stringify(defaultState));
     this.setState(originalState);
+  }
+
+  toggleAboutPage() {
+    this.changeVisibility('AboutPopup', !this.state.visibleWidgets.AboutPopup);
   }
 
   itemUpgraded(itemIndex) {
@@ -881,9 +948,9 @@ class App extends Component {
         upgrades[11].prerequisite = true;
         break;
       case 9:
-        debugger;
         this.setState({styleLevel: 1});
         upgrades[10].prerequisite = true;
+        upgrades[13].prerequisite = true;
         break;
       case 10:
         this.setState({styleLevel: 2});
@@ -893,6 +960,9 @@ class App extends Component {
         break;
       case 12:
         this.changeVisibility('ResetButton', true);
+        break;
+      case 13:
+        this.changeVisibility('AboutButton', true);
         break;
       default:
         console.log('Invalid Upgrade');
@@ -921,6 +991,7 @@ class App extends Component {
           curPower={this.state.currentComputingPower}
           overclock={this.overclock.bind(this)}
           resetGame={this.resetGame.bind(this)}
+          openAbout={this.toggleAboutPage.bind(this)}
           visibleWidgets={this.state.visibleWidgets}
           styleLevel={this.state.styleLevel}
         />
@@ -951,6 +1022,7 @@ class App extends Component {
           styleLevel={this.state.styleLevel}
         />
         <SingularityButton visible={this.state.currentComputingPower===this.state.maxComputingPower}/>
+        <AboutPopup visible={this.state.visibleWidgets.AboutPopup} closeAbout={this.toggleAboutPage.bind(this)} styleLevel={this.state.styleLevel}/>
       </div>
     );
   }
