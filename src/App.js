@@ -692,7 +692,7 @@ function SingularityButton(props) {
   if(props.visible) {
     return (
       <div>
-        <img className='create-singularity' src={logo} alt={'win'} style={singularityButton0}/>
+        <img className='create-singularity' src={logo} alt={'win'} style={singularityButton0} onClick={props.winGame}/>
       </div>
     ); 
   }
@@ -701,7 +701,7 @@ function SingularityButton(props) {
   }
 }
 
-const popupStyle1 = {
+const aboutPopupStyle1 = {
   display: 'block',
   position: 'fixed',
   zIndex: '1',
@@ -714,7 +714,7 @@ const popupStyle1 = {
   backgroundColor: 'AliceBlue',
   color: '#355C7D',
 }
-const popupStyle2 = {
+const aboutPopupStyle2 = {
   display: 'block',
   position: 'fixed',
   zIndex: '1',
@@ -731,18 +731,18 @@ function AboutPopup(props) {
   let popupStyle;
   let buttonStyle;
   switch(props.styleLevel) {
-      case 2:
-        popupStyle = popupStyle2;
-        buttonStyle = ocButtonStyle2;
-        break;
-      case 1:
-        popupStyle = popupStyle1;
-        buttonStyle = ocButtonStyle1;
-        break;
-      default:
-        popupStyle = popupStyle1;
-        buttonStyle = ocButtonStyle0;
-        break;
+    case 2:
+      popupStyle = aboutPopupStyle2;
+      buttonStyle = ocButtonStyle2;
+      break;
+    case 1:
+      popupStyle = aboutPopupStyle1;
+      buttonStyle = ocButtonStyle1;
+      break;
+    default:
+      popupStyle = aboutPopupStyle1;
+      buttonStyle = ocButtonStyle0;
+      break;
   }
   if(props.visible) {
     return (
@@ -750,6 +750,72 @@ function AboutPopup(props) {
         <button onClick={props.closeAbout} style={buttonStyle}>X</button>
         <p>Hi, thanks for trying out this little game!</p>
         <p>This clicker game was created purely in React. It was mostly made as a short learning introduction to how React component & states work.</p>
+      </div>
+    );
+  }
+  else {
+    return null;
+  }
+}
+
+const winPopupStyle0 = {
+  display: 'block',
+  position: 'fixed',
+  zIndex: '2',
+  left: '0',
+  top: '0',
+  width: '100%',
+  height: '100%',
+  backgroundColor: 'White',
+  color: 'Black',
+}
+const winPopupStyle1 = {
+  display: 'block',
+  position: 'fixed',
+  zIndex: '2',
+  left: '0',
+  top: '0',
+  width: '100%',
+  height: '100%',
+  padding: '20px',
+  backgroundColor: 'AliceBlue',
+  color: '#355C7D',
+}
+const winPopupStyle2 = {
+  display: 'block',
+  position: 'fixed',
+  zIndex: '2',
+  left: '0',
+  top: '0',
+  width: '100%',
+  height: '100%',
+  padding: '20px',
+  backgroundColor: '#355C7D',
+  color: '#b8fce4',
+  textAlign: 'center',
+}
+function WonGame(props) {
+  let pageStyle;
+  let buttonStyle;
+  switch(props.styleLevel) {
+    case 2:
+      pageStyle = winPopupStyle2;
+      buttonStyle = ocButtonStyle2;
+      break;
+    case 1:
+      pageStyle = winPopupStyle1;
+      buttonStyle = ocButtonStyle1;
+      break;
+    default:
+      pageStyle = winPopupStyle0;
+      buttonStyle = ocButtonStyle0;
+      break;
+  }
+  if(props.visible) {
+    return (
+      <div className='won-popup' style={pageStyle}>
+        <p>Congratulations on winning the game!</p>
+        <button onClick={props.resetGame} style={buttonStyle}>Play Again</button>
       </div>
     );
   }
@@ -810,6 +876,7 @@ const defaultState = {
     ResetButton: false,
     AboutButton: false,
     AboutPopup: false,
+    WonGamePopup: false,
   },
 
   upgrades: [
@@ -901,6 +968,10 @@ class App extends Component {
 
   toggleAboutPage() {
     this.changeVisibility('AboutPopup', !this.state.visibleWidgets.AboutPopup);
+  }
+
+  winGame() {
+    this.changeVisibility('WonGamePopup', true);
   }
 
   itemUpgraded(itemIndex) {
@@ -1021,8 +1092,9 @@ class App extends Component {
           visibleWidgets={this.state.visibleWidgets}
           styleLevel={this.state.styleLevel}
         />
-        <SingularityButton visible={this.state.currentComputingPower===this.state.maxComputingPower}/>
+        <SingularityButton visible={this.state.currentComputingPower===this.state.maxComputingPower} winGame={this.winGame.bind(this)}/>
         <AboutPopup visible={this.state.visibleWidgets.AboutPopup} closeAbout={this.toggleAboutPage.bind(this)} styleLevel={this.state.styleLevel}/>
+        <WonGame visible={this.state.visibleWidgets.WonGamePopup} resetGame={this.resetGame.bind(this)} styleLevel={this.state.styleLevel}/>
       </div>
     );
   }
