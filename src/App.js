@@ -149,7 +149,7 @@ class Navbar extends Component {
       return (
         <header className='navbar' style={navbarStyle}>
           {this.props.styleLevel > 0 &&
-            <img className='logo' src={logo} alt={'title'} style={logoStyle0}/>
+            <img className='logo' src={logo} style={logoStyle0}/>
           }
           <PowerDisplay
             curComputingPower={this.props.curPower}
@@ -336,7 +336,7 @@ class UpgradesWidget extends Component {
         tableStyle = upgradesTableStyle2;
         widgetStyle = upgradesWidgetStyle2;
         titleStyle = titleStyle2;
-        tableDivStyle = {border: '2px solid #355C7D', height: '95%'};
+        tableDivStyle = {border: '2px solid #355C7D', height: '95%', background: 'linear-gradient(to bottom right, white, #e0fff4)'};
         break;
       case 1:
         thStyle = upgradesThStyle1;
@@ -361,7 +361,7 @@ class UpgradesWidget extends Component {
             <table className='upgrades-table' style={tableStyle}>
               <thead>
               <tr>
-                <th style={thStyle}>Type</th>
+                <th style={thStyle}>Name</th>
                 <th style={thStyle}>Compile</th>
               </tr>
               </thead>
@@ -428,7 +428,8 @@ const aiDivStyle1 = {
 const aiDivStyle2 = {
   border: '2px solid #355C7D',
   padding: '14px',
-  height: '90%',
+  height: '95%',
+  background: 'linear-gradient(to bottom right, white, #e0fff4)',
 }
 
 const aiTextStyle0 = {}
@@ -499,7 +500,7 @@ class AiFunctionBox extends Component {
                 </div>
               </div>
             }
-            { this.props.curAiMultiplier === 1 &&
+            { this.props.curAiMultiplier === 1  && this.props.styleLevel > 0 &&
               <div>
                 <div style={aiTextStyle}>
                   <p>&nbsp;</p>
@@ -550,14 +551,14 @@ class AiFunctionBox extends Component {
 const timerBarOuter0 = {
   display: 'flex',
   flexDirection: 'column-reverse',
-  width: '2%',
+  width: '20px',
   height: '90%'
 }
 const timerBarOuter1 = {
   display: 'flex',
   flexDirection: 'column-reverse',
   border: '1px solid Black',
-  width: '1%',
+  width: '20px',
   height: '90%'
 }
 const timerBarOuter2 = {
@@ -565,7 +566,7 @@ const timerBarOuter2 = {
   flexDirection: 'column-reverse',
   border: '2px solid #355C7D',
   borderRadius: '12px',
-  width: '2%',
+  width: '20px',
   height: '90%'
 }
 const timerBarInner0 = {
@@ -577,9 +578,9 @@ const timerBarInner1 = {
   width: '100%',
 }
 const timerBarInner2 = {
-  backgroundColor: '#b8fce4',
   width: '100%',
   borderRadius: '12px',
+  background: 'linear-gradient(to bottom, #e0fff4, #6b8ea5)',
 }
 /* income timer progress bar */
 class TimerProgressBar extends Component {
@@ -617,20 +618,20 @@ class TimerProgressBar extends Component {
 
 const singularityBarOuter0 = {
   width: '80%',
-  height: '3%'
+  height: '30px'
 }
 const singularityBarOuter1 = {
   border: '1px solid Black',
-  margin: '1% auto',
+  margin: '20px auto',
   width: '80%',
-  height: '3%'
+  height: '30px'
 }
 const singularityBarOuter2 = {
   border: '2px solid #355C7D',
   borderRadius: '12px',
-  margin: '1% auto',
+  margin: '20px auto',
   width: '80%',
-  height: '3%'
+  height: '30px'
 }
 const singularityBarInner0 = {
   backgroundColor: 'Black',
@@ -641,9 +642,9 @@ const singularityBarInner1 = {
   height: '100%'
 }
 const singularityBarInner2 = {
-  backgroundColor: '#b8fce4',
+  background: 'linear-gradient(to left, #e0fff4, #6b8ea5)',
   height: '100%',
-  borderRadius: '12px',
+  borderRadius: '11px',
 }
 /* win game progress bar */
 class SingularityProgressBar extends Component {
@@ -683,9 +684,9 @@ class SingularityProgressBar extends Component {
 const singularityButton0 = {
   marginLeft: '48%',
   marginRight: 'auto',
-  marginTop: '8px',
-  width: '4%',
-  height: '4%'
+  marginTop: '0',
+  width: '80px',
+  height: '80px'
 }
 /* singularity button */
 function SingularityButton(props) {
@@ -707,7 +708,7 @@ const aboutPopupStyle1 = {
   zIndex: '1',
   right: '0',
   top: '0',
-  width: '40%',
+  width: '25%',
   height: '100%',
   padding: '20px',
   borderLeft: '1px solid #355C7D',
@@ -720,12 +721,35 @@ const aboutPopupStyle2 = {
   zIndex: '1',
   right: '0',
   top: '0',
-  width: '40%',
+  width: '25%',
   height: '100%',
   padding: '20px',
-  borderLeft: '2px solid #b8fce4',
-  backgroundColor: '#355C7D',
-  color: '#b8fce4',
+  background: 'linear-gradient(to bottom left, white, #b8fce4)',
+  color: '#355C7D',
+}
+const closeAboutButtonStyle1 = {
+  position: 'fixed',
+  right: '0',
+  top: '0',
+  margin: '4px',
+  padding: '4px',
+  border: '1px solid #6b8ea5',
+  borderRadius: '4px',
+  backgroundColor: 'white',
+  color: '#355C7D',
+  fontWeight: 'bold',
+}
+const closeAboutButtonStyle2 = {
+  position: 'fixed',
+  right: '0',
+  top: '0',
+  margin: '4px',
+  padding: '4px',
+  border: '1px solid #6b8ea5',
+  borderRadius: '4px',
+  backgroundColor: 'white',
+  color: '#355C7D',
+  fontWeight: 'bold',
 }
 function AboutPopup(props) {
   let popupStyle;
@@ -733,23 +757,29 @@ function AboutPopup(props) {
   switch(props.styleLevel) {
     case 2:
       popupStyle = aboutPopupStyle2;
-      buttonStyle = ocButtonStyle2;
+      buttonStyle = closeAboutButtonStyle2;
       break;
     case 1:
       popupStyle = aboutPopupStyle1;
-      buttonStyle = ocButtonStyle1;
+      buttonStyle = closeAboutButtonStyle1;
       break;
     default:
       popupStyle = aboutPopupStyle1;
-      buttonStyle = ocButtonStyle0;
+      buttonStyle = closeAboutButtonStyle1;
       break;
   }
   if(props.visible) {
     return (
       <div className='about-popup' style={popupStyle}>
         <button onClick={props.closeAbout} style={buttonStyle}>X</button>
-        <p>Hi, thanks for trying out this little game!</p>
-        <p>This clicker game was created purely in React. It was mostly made as a short learning introduction to how React component & states work.</p>
+        <p style={{fontSize: '24px', fontWeight: 'bold', position: 'fixed', top: '30%'}}>
+          Hi, thanks for trying out this little game!
+        </p>
+        <p style={{fontSize: '18px', position: 'fixed', top: '35%'}}>
+          This clicker game was created purely using React. I made this as a short learning introduction to how React components, props & states work.
+          <br/><br/>The source code for this game can be found <a href='https://github.com/carlchizhang/componentGame' target='_blank' style={{color: '#355C7D'}}>Here</a>.
+          <br/><br/>Feel free to check out some of my other stuff on my <a href='http://www.carlchizhang.com/' target='_blank' style={{color: '#355C7D'}}>website</a>.
+        </p>
       </div>
     );
   }
@@ -796,26 +826,35 @@ const winPopupStyle2 = {
 }
 function WonGame(props) {
   let pageStyle;
-  let buttonStyle;
+  let textStyle1;
+  let textStyle2;
+  let playAgainTextStyle;
   switch(props.styleLevel) {
     case 2:
       pageStyle = winPopupStyle2;
-      buttonStyle = ocButtonStyle2;
+      textStyle1 = {fontSize: '48px', fontWeight: 'bold', marginTop: '25vh'};
+      textStyle2 = {fontSize: '24px', marginTop: '5vh', marginBottom: '15vh'};
+      playAgainTextStyle = {fontSize: '36px', fontWeight: 'bold', cursor: 'pointer'};
       break;
     case 1:
       pageStyle = winPopupStyle1;
-      buttonStyle = ocButtonStyle1;
+      textStyle1 = {fontSize: '48px', fontWeight: 'bold', marginTop: '25vh'};
+      textStyle2 = {fontSize: '24px', marginTop: '5vh', marginBottom: '15vh'};
+      playAgainTextStyle = {fontSize: '36px', fontWeight: 'bold', cursor: 'pointer'};
       break;
     default:
       pageStyle = winPopupStyle0;
-      buttonStyle = ocButtonStyle0;
+      textStyle1 = {};
+      textStyle2 = {};
+      playAgainTextStyle = {cursor: 'pointer'};
       break;
   }
   if(props.visible) {
     return (
       <div className='won-popup' style={pageStyle}>
-        <p>Congratulations on winning the game!</p>
-        <button onClick={props.resetGame} style={buttonStyle}>Play Again</button>
+        <p style={textStyle1}>You have succeeded in creating the Singularity.</p>
+        <p style={textStyle2}>Congratulations on winning the game!</p>
+        <p style={playAgainTextStyle} onClick={props.resetGame}>Play Again</p>
       </div>
     );
   }
@@ -828,7 +867,7 @@ function WonGame(props) {
 const mainBodyStyle0 = {
   display: 'flex',
   flexWrap: 'wrap',
-  height: '90%',
+  height: '75%',
   width: '100%',
   minWidth: '800px',
   margin: '0 auto'
@@ -857,14 +896,14 @@ const mainBodyStyle2 = {
 }
 
 const defaultState = {
-  currentComputingPower: 262144,
+  currentComputingPower: 0,
   currentOverclockIncrement: 16,
   maxComputingPower: 262144,
   styleLevel: 0,
 
   aiTimerCur: 0,
   aiTimerMax: 30000,
-  aiCurIncrement: 64,
+  aiCurIncrement: 256,
   aiMultiplier: 1,
 
   visibleWidgets: {
@@ -880,26 +919,25 @@ const defaultState = {
   },
 
   upgrades: [
-    {upgradeName: 'High-Energy Capacitors', upgradeCost: 512, compiled: false, prerequisite: true}, //0 oc 0
-    {upgradeName: 'Quantum Energy States', upgradeCost: 16384, compiled: false, prerequisite: false},  //1 oc 1
-    {upgradeName: 'Applied Superconductivity', upgradeCost: 32768, compiled: false, prerequisite: false}, //2 oc 2
-    {upgradeName: 'Digital Navigation', upgradeCost: 4096, compiled: false, prerequisite: true}, //3 navbar
-    {upgradeName: 'Assembly Patterns', upgradeCost: 2048, compiled: false, prerequisite: true}, //4 upgrades table
-    {upgradeName: 'Construction Templates', upgradeCost: 131072, compiled: false, prerequisite: true}, //5 win progress
-    {upgradeName: 'AI level 1', upgradeCost: 2048, compiled: false, prerequisite: false},//6 ai 0
-    {upgradeName: 'AI Progress Bar', upgradeCost: 4096, compiled: false, prerequisite: false},//7 ai bar
-    {upgradeName: 'AI level 2', upgradeCost: 8192, compiled: false, prerequisite: false},//8 ai 1
-    {upgradeName: 'Style level 1', upgradeCost: 4096, compiled: false, prerequisite: true},//9 style 0
-    {upgradeName: 'Style level 2', upgradeCost: 32768, compiled: false, prerequisite: false},//10 style 1
-    {upgradeName: 'AI level 3', upgradeCost: 16384, compiled: false, prerequisite: false},//11 style 2
-    {upgradeName: 'Reset Button', upgradeCost: 8192, compiled: false, prerequisite: false},//12 reset
-    {upgradeName: 'About Button', upgradeCost: 8192, compiled: false, prerequisite: false},//13 about
-    // win button & winning ofc
-    // icons
-    // title bar info
+    {upgradeName: 'Capacitor Module', upgradeCost: 512, compiled: false, prerequisite: true}, //0 oc 0
+    {upgradeName: 'Quantum Energy State Upgrade', upgradeCost: 8192, compiled: false, prerequisite: false},  //1 oc 1
+    {upgradeName: 'Applied Superconductivity Upgrade', upgradeCost: 32768, compiled: false, prerequisite: false}, //2 oc 2
+    {upgradeName: 'Digital Navigation Module', upgradeCost: 4096, compiled: false, prerequisite: false}, //3 navbar
+    {upgradeName: 'Assembly Patterns Module', upgradeCost: 2048, compiled: false, prerequisite: true}, //4 upgrades table
+    {upgradeName: 'Progress Monitoring Module', upgradeCost: 131072, compiled: false, prerequisite: true}, //5 win progress
+    {upgradeName: 'Artificial Intelligence Module', upgradeCost: 1024, compiled: false, prerequisite: true},//6 ai 0
+    {upgradeName: 'Administrative Monitoring Upgrade', upgradeCost: 4096, compiled: false, prerequisite: false},//7 ai bar
+    {upgradeName: 'Positronic Brain Upgrade', upgradeCost: 4096, compiled: false, prerequisite: false},//8 ai 1
+    {upgradeName: 'Aesthetics Module', upgradeCost: 4096, compiled: false, prerequisite: true},//9 style 0
+    {upgradeName: 'Synthetic Beauty Upgrade', upgradeCost: 32768, compiled: false, prerequisite: false},//10 style 1
+    {upgradeName: 'Self-Evolving Logic Upgrade', upgradeCost: 16384, compiled: false, prerequisite: false},//11 style 2
+    {upgradeName: 'Time Jump Module', upgradeCost: 16384, compiled: false, prerequisite: false},//12 reset
+    {upgradeName: 'Information Module', upgradeCost: 8192, compiled: false, prerequisite: false},//13 about
     // saving/loading
-    // animations if possible
-    // some more upgrade tiers to make it more worthawhile
+    // title bar info
+    // icons
+    // style level 4 if i figure out animations (can prob use gifs) and other bonuses && migrate this over to using pure css & dynamic classes for easier access
+    // some more upgrade tiers to make it more worthawhile - this is mostly low priority, just get it out there
   ],
 };
 
@@ -1015,11 +1053,12 @@ class App extends Component {
         this.changeVisibility('AiTimerBar', true);
         break;
       case 8:
-        this.setState({aiCurIncrement: 256});
+        this.setState({aiCurIncrement: 1024});
         upgrades[11].prerequisite = true;
         break;
       case 9:
         this.setState({styleLevel: 1});
+        upgrades[3].prerequisite = true;
         upgrades[10].prerequisite = true;
         upgrades[13].prerequisite = true;
         break;
@@ -1092,7 +1131,7 @@ class App extends Component {
           visibleWidgets={this.state.visibleWidgets}
           styleLevel={this.state.styleLevel}
         />
-        <SingularityButton visible={this.state.currentComputingPower===this.state.maxComputingPower} winGame={this.winGame.bind(this)}/>
+        <SingularityButton visible={this.state.currentComputingPower>=this.state.maxComputingPower} winGame={this.winGame.bind(this)}/>
         <AboutPopup visible={this.state.visibleWidgets.AboutPopup} closeAbout={this.toggleAboutPage.bind(this)} styleLevel={this.state.styleLevel}/>
         <WonGame visible={this.state.visibleWidgets.WonGamePopup} resetGame={this.resetGame.bind(this)} styleLevel={this.state.styleLevel}/>
       </div>
